@@ -78,7 +78,7 @@ The hook accepts an object with the fields below. At least one of the first 4 fi
 | `entityId`             | `string \| undefined \| null` | No      | The ID of the entity in Replyke's system.                      |
 | `foreignId`             | `string \| undefined \| null` | No      | The original item's ID if integrated with an external dataset, or a static value (e.g., "about-page").                      |
 | `shortId`             | `string \| undefined \| null` | No      | The unique short ID of the entity.                      |
-| `entity`             | `string \| undefined \| null` | No      | A complete `Entity` object.                      |
+| `entity`             | `Entity \| undefined \| null` | No      | A complete `Entity` object.                      |
 | `createIfNotFound`             | `string \| undefined \| null` | No      | An optional flag which instructs Replyke to create an entity if one isn’t found.                      |
 | `limit`                | `number`                   | No       | The number of comments to fetch per page. Default is `15`.              |
 | `defaultSortBy`        | `CommentsSortByOptions`     | No       | The default sorting criteria for comments (e.g., `new`, `top`).         |
@@ -89,32 +89,31 @@ The hook accepts an object with the fields below. At least one of the first 4 fi
 
 The hook returns an object with the following fields:
 
-| Return Value             | Type                                | Description                                                           |
-|--------------------------|-------------------------------------|-----------------------------------------------------------------------|
-| `entityId`               | `string \| undefined \| null`       | The ID of the associated entity.                                      |
-| `callbacks`              | `SocialStyleCallbacks`              | The callbacks passed into the hook.                                   |
-| `entityCommentsTree`     | `EntityCommentsTree`                | The tree structure of the comments associated with the entity.        |
-| `comments`               | `CommentType[]`                    | The list of root-level comments fetched so far.                             |
-| `newComments`            | `CommentType[]`                    | Newly added root-level comments.                                                 |
-| `loading`                | `boolean`                          | Indicates whether comments are being loaded.                          |
-| `hasMore`                | `boolean`                          | Indicates whether there are more comments to fetch.                   |
-| `submittingComment`      | `boolean`                          | Indicates whether a comment is currently being submitted.             |
-| `loadMore`               | `() => void`                       | A function to fetch the next page of comments.                        |
-| `sortBy`                 | `CommentsSortByOptions \| null`     | The current sorting criteria for comments.                            |
-| `setSortBy`              | `(newSortBy: CommentsSortByOptions) => void` | A function to update the sorting criteria.                            |
-| `pushMention`            | `UserLean \| null`                  | The user being mentioned in a reply.                                  |
-| `setPushMention`         | `(user: UserLean \| null) => void`  | A function to set the user being mentioned.                           |
-| `previousPushMention`    | `UserLean \| null`                  | The previously mentioned user.                                        |
-| `selectedComment`        | `CommentType \| null`               | The currently selected comment.                                       |
-| `setSelectedComment`     | `(newSelectedComment: CommentType \| null) => void` | A function to set the selected comment.                               |
-| `repliedToComment`       | `Partial<CommentType> \| null`      | The comment being replied to.                                         |
-| `setRepliedToComment`    | `(newRepliedToComment: CommentType \| null) => void` | A function to set the replied-to comment.                             |
-| `showReplyBanner`        | `boolean`                          | Indicates whether the reply banner is shown.                          |
-| `setShowReplyBanner`     | `(newState: boolean) => void`       | A function to toggle the reply banner.                                |
-| `addCommentsToTree`      | `(newComments: CommentType[], newlyAdded?: boolean) => void` | A function to add comments to the tree structure.                     |
-| `removeCommentFromTree`  | `(commentId: string) => void`       | A function to remove a comment from the tree structure.               |
-| `createComment`          | `(props: { content: string; mentions: Mention[] }) => Promise<void>` | A function to create a new comment.                                  |
-| `updateComment`          | `(props: { commentId: string; content: string }) => Promise<void>` | A function to update an existing comment.                            |
-| `deleteComment`          | `(props: { commentId: string }) => Promise<void>` | A function to delete a comment.                                      |
-| `highlightedComment`     | `{ comment: CommentType; parentComment: CommentType \| null } \| null` | The highlighted comment and its parent (if any).                     |
-
+| Return Value            | Type                                                                                 | Description                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `entity`                | `Entity \| undefined \| null`                                                        | The associated entity for the comment section.                          |
+| `callbacks`             | `Record<string, (...args: any[]) => void> \| undefined`                              | Optional callbacks passed into the hook.                                |
+| `entityCommentsTree`    | `EntityCommentsTree`                                                                 | Tree structure representing threaded comments.                          |
+| `comments`              | `Comment[]`                                                                          | The list of root-level comments currently loaded.                       |
+| `newComments`           | `Comment[]`                                                                          | Comments that were recently added during the session.                   |
+| `highlightedComment`    | `{ comment: Comment; parentComment: Comment \| null } \| null`                       | A highlighted comment and its parent, useful for deep linking.          |
+| `loading`               | `boolean`                                                                            | Indicates if comments are currently loading.                            |
+| `hasMore`               | `boolean`                                                                            | Whether there are more comments available for pagination.               |
+| `submittingComment`     | `boolean`                                                                            | Whether a comment is currently being submitted.                         |
+| `loadMore`              | `() => void`                                                                         | Loads the next page of comments.                                        |
+| `sortBy`                | `CommentsSortByOptions \| null`                                                      | Current sorting method for the comments.                                |
+| `setSortBy`             | `(newSortBy: CommentsSortByOptions) => void`                                         | Updates the comment sort order.                                         |
+| `pushMention`           | `UserLean \| null`                                                                   | User that is being mentioned in a reply.                                |
+| `selectedComment`       | `Comment \| null`                                                                    | The comment currently selected (e.g., for editing or context menu).     |
+| `setSelectedComment`    | `(newSelectedComment: Comment \| null) => void`                                      | Sets the selected comment.                                              |
+| `repliedToComment`      | `Partial<Comment> \| null`                                                           | The comment being replied to.                                           |
+| `setRepliedToComment`   | `(newRepliedToComment: Comment \| null) => void`                                     | Sets the comment being replied to.                                      |
+| `showReplyBanner`       | `boolean`                                                                            | Whether the UI banner indicating a reply is visible.                    |
+| `setShowReplyBanner`    | `(newState: boolean) => void`                                                        | Controls the reply banner visibility.                                   |
+| `addCommentsToTree`     | `(newComments: Comment[] \| undefined, newlyAdded?: boolean) => void`                | Adds comments to the threaded comment tree.                             |
+| `removeCommentFromTree` | `(commentId: string) => void`                                                        | Removes a comment from the tree structure.                              |
+| `handleShallowReply`    | `(comment: Comment) => void`                                                         | Handles a shallow reply (mention-only, not nested).                     |
+| `handleDeepReply`       | `(comment: Comment) => void`                                                         | Handles a deep reply (visibly nested under the parent comment).         |
+| `createComment`         | `(props: { content?: string; gif?: GifData; mentions: Mention[] }) => Promise<void>` | Submits a new comment. Includes temporary rendering and error fallback. |
+| `updateComment`         | `(props: { commentId: string; content: string }) => Promise<void>`                   | Updates an existing comment.                                            |
+| `deleteComment`         | `(props: { commentId: string }) => Promise<void>`                                    | Deletes a comment from both the UI and backend.                         |

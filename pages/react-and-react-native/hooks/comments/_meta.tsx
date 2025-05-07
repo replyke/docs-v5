@@ -1,7 +1,8 @@
 export default {
   useCreateComment: "useCreateComment",
-  useFetchComments: "useFetchComments",
-  useFetchSingleComment: "useFetchSingleComment",
+  useFetchComment: "useFetchComment",
+  useFetchCommentByForeignId: "useFetchCommentByForeignId",
+  useFetchManyComments: "useFetchManyComments",
   useUpdateComment: "useUpdateComment",
   useCommentVotes: "useCommentVotes",
   useUpvoteComment: "useUpvoteComment",
@@ -10,5 +11,6 @@ export default {
   useRemoveCommentDownvote: "useRemoveCommentDownvote",
   useDeleteComment: "useDeleteComment",
   useCommentSectionData: "useCommentSectionData",
-  useProfileCommentsData: "useProfileCommentsData",
+  useEntityComments: "useEntityComments",
+  useProfileComments: "useProfileCommentsData",
 };

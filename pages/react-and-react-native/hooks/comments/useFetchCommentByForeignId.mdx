@@ -1,21 +1,21 @@
-# `useFetchSingleComment`
+# `useFetchCommentByForeignId`
 
 ## Overview
 
-The `useFetchSingleComment` hook allows you to retrieve a specific comment by its ID. It optionally includes the parent comment, making it useful for displaying threaded comment structures or fetching detailed comment data.
+The `useFetchCommentByForeignId` hook allows you to retrieve a specific comment by its foreign ID. It optionally includes the parent comment, making it useful for displaying threaded comment structures or fetching detailed comment data.
 
 
 ## Usage Example
 
 ```tsx
-import { useFetchSingleComment } from "@replyke/react-js";
+import { useFetchCommentByForeignId } from "@replyke/react-js";
 
 function CommentDetails({ commentId }: { commentId: string }) {
-  const fetchSingleComment = useFetchSingleComment();
+  const fetchCommentByForeignId = useFetchCommentByForeignId();
 
-  const handleFetchSingleComment = async () => {
+  const handleFetchCommentByForeignId = async () => {
     try {
-      const { comment, parentComment } = await fetchSingleComment({
+      const { comment, parentComment } = await fetchCommentByForeignId({
         commentId,
         withParent: true,
       });
@@ -27,7 +27,7 @@ function CommentDetails({ commentId }: { commentId: string }) {
     }
   };
 
-  return <button onClick={handleFetchSingleComment}>Fetch Comment</button>;
+  return <button onClick={handleFetchCommentByForeignId}>Fetch Comment</button>;
 }
 ```
 
@@ -40,7 +40,7 @@ The hook returns a function that accepts an object with the following fields:
 
 | Parameter     | Type       | Required | Description                                 |
 |---------------|------------|----------|---------------------------------------------|
-| `commentId`   | `string`   | Yes      | The ID of the comment to fetch.             |
+| `foreignId`   | `string`   | Yes      | The foreign ID of the comment to fetch.             |
 | `withParent`  | `boolean`  | No       | Whether to include the parent comment.      |
 
 ### Returns

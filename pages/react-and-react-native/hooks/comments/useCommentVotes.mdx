@@ -8,9 +8,9 @@ The `useCommentVotes` hook provides functionality to manage upvotes and downvote
 ## Usage Example
 
 ```tsx
-import { useCommentVotes } from "@replyke/react-js";
+import { useCommentVotes, Comment } from "@replyke/react-js";
 
-function CommentVotes({ comment, setComment }: { comment: CommentType; setComment: React.Dispatch<React.SetStateAction<CommentType>> }) {
+function CommentVotes({ comment, setComment }: { comment: Comment; setComment: React.Dispatch<React.SetStateAction<Comment>> }) {
   const { upvoteComment, removeCommentUpvote, downvoteComment, removeCommentDownvote } = useCommentVotes({ comment, setComment });
 
   return (
@@ -32,8 +32,8 @@ The hook accepts an object with the following fields:
 
 | Parameter     | Type                                           | Required | Description                              |
 |---------------|------------------------------------------------|----------|------------------------------------------|
-| `comment`     | `CommentType`                                 | Yes      | The comment object to manage votes for.  |
-| `setComment`  | `React.Dispatch<React.SetStateAction<CommentType>>` | Yes      | A state setter function for the comment. |
+| `comment`     | `Comment`                                 | Yes      | The comment object to manage votes for.  |
+| `setComment`  | `React.Dispatch<React.SetStateAction<Comment>>` | Yes      | A state setter function for the comment. |
 
 ### Returns
 
