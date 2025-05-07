@@ -37,4 +37,10 @@ The hook returns a function that accepts an object with the following fields:
 | `userJwt`   | `string`  | Yes      | A securely signed JWT containing the external user’s details. |
 
 ### Returns
-The function resolves with an object containing the verification result. The exact structure of the returned data depends on your system's implementation.
+The returned function resolves with an object containing:
+
+| Property         | Type      | Description |
+|------------------|-----------|-------------|
+| `accessToken`    | `string`  | The access token for the newly created user. It should be stored in memory. |
+| `refreshToken`   | `string`  | The refresh token for the user session. React Native apps must store this securely, whereas React apps do not need to store it manually as it is managed via cookies. |
+| `user`           | `object`  | The registered user’s details. |

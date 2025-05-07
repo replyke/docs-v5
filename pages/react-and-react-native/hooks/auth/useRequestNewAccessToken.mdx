@@ -34,7 +34,7 @@ The hook returns a function that accepts an object with the following fields:
 
 | Parameter       | Type      | Required | Description |
 | --------------- | --------- | -------- | ----------- |
-| `refreshToken`  | `string`  | Yes      | The refresh token for the user session. React Native apps must pass this token explicitly, as it is not managed automatically. React apps handle this via cookies and do not need to provide this token explicitly. |
+| `refreshToken`  | `string`  | No      | The refresh token for the user session. React Native apps must pass this token explicitly, as it is not managed automatically. React apps handle this via cookies and do not need to provide this token explicitly. |
 
 ### Returns
 The function resolves with an object containing:
