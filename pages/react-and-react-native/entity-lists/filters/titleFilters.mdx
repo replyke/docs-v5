@@ -5,7 +5,7 @@ The **Title Filters** in Replyke allow developers to filter entities based on th
 
 #### **Overview of Title Filters**
 
-The `titleFilters` property can be passed into the `FeedProvider` as an object with the following structure:
+The `titleFilters` property can be passed into the `EntityListProvider` as an object with the following structure:
 
 ```typescript
 export interface TitleFilters {
@@ -21,10 +21,10 @@ export interface TitleFilters {
 
 #### **Dynamically Updating Title Filters**
 
-Developers can dynamically update the title filters using the `setTitleFilters` function provided by the `useFeed` hook. This function expects a new `titleFilters` object or `null` to clear the filters.
+Developers can dynamically update the title filters using the `setTitleFilters` function provided by the `useEntityList` hook. This function expects a new `titleFilters` object or `null` to clear the filters.
 
 ```tsx
-const { setTitleFilters } = useFeed();
+const { setTitleFilters } = useEntityList();
 
 // Set a new title filter
 setTitleFilters({ includes: "React", doesNotInclude: "Angular" });
@@ -45,16 +45,16 @@ Title Filters are applied on the backend when querying entities. They allow for:
 
 #### **Example Use Cases**
 
-##### **1. Passing Static Filters to the FeedProvider**
+##### **1. Passing Static Filters to the EntityListProvider**
 
-To set static filters for titles at the initialization of the feed, pass them directly to the `FeedProvider`:
+To set static filters for titles at the initialization of the entity list, pass them directly to the `EntityListProvider`:
 
 ```tsx
-<FeedProvider
+<EntityListProvider
   titleFilters={{ hasTitle: true, includes: ["React", "JavaScript"], doesNotInclude: "Angular" }}
 >
   <MyFeedComponent />
-</FeedProvider>
+</EntityListProvider>
 ```
 
 This setup ensures that only entities with a title are included, and those titles must contain either "React" or "JavaScript" while excluding "Angular."
@@ -64,7 +64,7 @@ This setup ensures that only entities with a title are included, and those title
 You can also dynamically adjust the title filters based on user actions, such as clicking a button:
 
 ```tsx
-const { setTitleFilters, infusedEntities, loadMore } = useFeed();
+const { setTitleFilters, infusedEntities, loadMore } = useEntityList();
 
 const handleFilterUpdate = (newIncludes: string[], newExcludes: string[]) => {
   setTitleFilters({ includes: newIncludes, doesNotInclude: newExcludes });
@@ -91,14 +91,14 @@ return (
 );
 ```
 
-In this example, clicking the button updates the title filters dynamically, allowing users to customize the feed results.
+In this example, clicking the button updates the title filters dynamically, allowing users to customize the entity list's results.
 
 #### **Important Notes**
 
 -   Title Filters are case-insensitive, making them flexible for user-defined queries.
--   Filters are applied immediately, and the feed resets to reflect the updated conditions.
+-   Filters are applied immediately, and the entity list resets to reflect the updated conditions.
 -   Passing `null` to `setTitleFilters` clears all title-based filtering.
 
 #### **Conclusion**
 
-Title Filters provide developers with powerful tools to fine-tune feed results based on the content of entity titles. Whether setting static filters at initialization or dynamically updating them based on user input, Title Filters ensure your feed presents the most relevant content. With options to filter by existence, inclusion, and exclusion, you can cater to diverse application needs effortlessly.
+Title Filters provide developers with powerful tools to fine-tune entity list results based on the content of entity titles. Whether setting static filters at initialization or dynamically updating them based on user input, Title Filters ensure your entity list presents the most relevant content. With options to filter by existence, inclusion, and exclusion, you can cater to diverse application needs effortlessly.

@@ -35,15 +35,15 @@ The `useSocialComments` hook provides these components and ensures they work tog
 
 **Required Properties**
 
-1.  The hook expects at least one of the following properties. None are mandatory individually, but at least one must be provided:
+1.  In order for the comment section to function properly, it need to be aware of the entity it related to. Therefore, the hook expects at least one of the following properties. None are mandatory individually, but at least one must be provided:
 
   - `entityId`: The ID of the entity in Replyke's system.
 
-  - `referenceId`: The original item's ID if integrated with an external dataset, or a static value (e.g., "about-page").
+  - `foreignId`: The foreign/external ID of the entity. Only relevant when Replyke is integrated on top of an external dataset, or a static value (e.g., "about-page").
 
   - `shortId`: The unique short ID of the entity.
 
-  - `entity`: A complete `Entity` object. This is useful when rendering entities in a feed where the data is already available, preventing redundant refetches by passing the existing entity into the provider.
+  - `entity`: A complete `Entity` object. This is useful when rendering entities in a feed where the data is already available, preventing redundant re-fetches by passing the existing entity into the provider.
 
 2.  **styleConfig**: A configuration object created using the `useSocialStyle` hook. It allows for basic style customization of the comment section.
 

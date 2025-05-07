@@ -29,12 +29,13 @@ signUpWithEmailAndPassword: (props: {
   };
   birthdate?: Date;
   metadata?: Record<string, any>;
+  secureMetadata?: Record<string, any>;
 }) => Promise<void>;
 ``` 
 
 ##### Example:
 
-```
+```typescript
 const { signUpWithEmailAndPassword } = useAuth();
 
 await signUpWithEmailAndPassword({
@@ -54,7 +55,7 @@ This function handles user login using an email and password.
 
 ##### Parameters:
 
-```
+```typescript
 signInWithEmailAndPassword: (props: {
   email: string;
   password: string;
@@ -63,7 +64,7 @@ signInWithEmailAndPassword: (props: {
 
 ##### Example:
 
-```
+```typescript
 const { signInWithEmailAndPassword } = useAuth();
 
 await signInWithEmailAndPassword({
@@ -81,16 +82,43 @@ This function signs out the currently authenticated user.
 ##### Parameters:
 
 
-```
+```typescript
 signOut: () => Promise<void>;
 ```
 
 ##### Example:
 
-```
+```typescript
 const { signOut } = useAuth();
 
 await signOut();
+```
+
+----------
+
+#### **Change-password**
+
+This function lets an authenticated user change their password.
+
+##### Parameters:
+
+
+```typescript
+changePassword: (props: {
+  password: string;
+  newPassword: string;
+}) => Promise<void>;
+```
+
+##### Example:
+
+```typescript
+const { changePassword } = useAuth();
+
+await changePassword({
+  password: "12345678",
+  newPassword: "abcdefgh",
+});
 ```
 
 ----------

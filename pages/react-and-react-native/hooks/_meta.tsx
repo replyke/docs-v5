@@ -1,5 +1,5 @@
 export default {
-  crypto: "Crypography",
+  crypto: "Cryptography",
   auth: "Authentication",
   users: "Users",
   entities: "Entities",

@@ -8,5 +8,5 @@ export default {
   useDeleteEntity: "useDeleteEntity",
   useInfusedData: "useInfusedData",
   useEntityData: "useEntityData",
-  useFeedData: "useFeedData",
+  useEntityListData: "useEntityListData",
 };

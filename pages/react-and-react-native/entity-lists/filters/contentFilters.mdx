@@ -5,7 +5,7 @@ The **Content Filters** in Replyke allow developers to filter entities based on 
 
 #### **Overview of Content Filters**
 
-The `contentFilters` property can be passed into the `FeedProvider` as an object with the following structure:
+The `contentFilters` property can be passed into the `EntityListProvider` as an object with the following structure:
 
 ```typescript
 export interface ContentFilters {
@@ -21,10 +21,10 @@ export interface ContentFilters {
 
 #### **Dynamically Updating Content Filters**
 
-Developers can dynamically update the content filters using the `setContentFilters` function provided by the `useFeed` hook. This function expects a new `contentFilters` object or `null` to clear the filters.
+Developers can dynamically update the content filters using the `setContentFilters` function provided by the `useEntityList` hook. This function expects a new `contentFilters` object or `null` to clear the filters.
 
 ```tsx
-const { setContentFilters } = useFeed();
+const { setContentFilters } = useEntityList();
 
 // Set a new content filter
 setContentFilters({ includes: "JavaScript", doesNotInclude: "PHP" });
@@ -45,16 +45,16 @@ Content Filters are applied on the backend when querying entities. They allow fo
 
 #### **Example Use Cases**
 
-##### **1. Passing Static Filters to the FeedProvider**
+##### **1. Passing Static Filters to the EntityListProvider**
 
-To set static filters for content at the initialization of the feed, pass them directly to the `FeedProvider`:
+To set static filters for content at the initialization of the feed, pass them directly to the `EntityListProvider`:
 
 ```tsx
-<FeedProvider
+<EntityListProvider
   contentFilters={{ hasContent: true, includes: ["JavaScript", "React"], doesNotInclude: "PHP" }}
 >
   <MyFeedComponent />
-</FeedProvider>
+</EntityListProvider>
 ```
 
 This setup ensures that only entities with content are included, and that content must contain either "JavaScript" or "React" while excluding "PHP."
@@ -64,7 +64,7 @@ This setup ensures that only entities with content are included, and that conten
 You can also dynamically adjust the content filters based on user actions, such as clicking a button:
 
 ```tsx
-const { setContentFilters, infusedEntities, loadMore } = useFeed();
+const { setContentFilters, infusedEntities, loadMore } = useEntityList();
 
 const handleFilterUpdate = (newIncludes: string[], newExcludes: string[]) => {
   setContentFilters({ includes: newIncludes, doesNotInclude: newExcludes });

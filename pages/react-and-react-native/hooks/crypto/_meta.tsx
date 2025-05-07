@@ -1,3 +1,3 @@
 export default {
-  usePublicKey: "usePublicKey",
+  useSignTestingJwt: "useSignTestingJwt",
 };

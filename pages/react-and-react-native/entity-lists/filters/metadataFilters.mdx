@@ -1,11 +1,11 @@
 
 ### Metadata Filters
 
-The **Metadata Filters** in Replyke allow developers to filter entities based on their `metadata` property, which is flexible and can store unstructured data. This filter is highly versatile, enabling fine-grained control over the feed by matching key-value pairs, verifying key existence, and excluding unwanted metadata.
+The **Metadata Filters** in Replyke allow developers to filter entities based on their `metadata` property, which is flexible and can store unstructured data. This filter is highly versatile, enabling fine-grained control over the entity list by matching key-value pairs, verifying key existence, and excluding unwanted metadata.
 
 #### **Overview of Metadata Filters**
 
-The `metadataFilters` property can be passed into the `FeedProvider` as an object with the following structure:
+The `metadataFilters` property can be passed into the `EntityListProvider` as an object with the following structure:
 
 ```typescript
 export interface MetadataFilters {
@@ -23,10 +23,10 @@ export interface MetadataFilters {
 
 #### **Dynamically Updating Metadata Filters**
 
-Developers can dynamically update the metadata filters using the `setMetadataFilters` function provided by the `useFeed` hook. This function expects a new `metadataFilters` object or `null` to clear the filters.
+Developers can dynamically update the metadata filters using the `setMetadataFilters` function provided by the `useEntityList` hook. This function expects a new `metadataFilters` object or `null` to clear the filters.
 
 ```tsx
-const { setMetadataFilters } = useFeed();
+const { setMetadataFilters } = useEntityList();
 
 // Set a filter to include entities with specific metadata
 setMetadataFilters({ includes: { category: "tech", featured: true } });
@@ -49,12 +49,12 @@ Metadata Filters allow for complex queries that include:
 
 #### **Example Use Cases**
 
-##### **1. Passing Static Filters to the FeedProvider**
+##### **1. Passing Static Filters to the EntityListProvider**
 
-To set static metadata filters at feed initialization, pass them directly to the `FeedProvider`:
+To set static metadata filters at the entity list's initialization, pass them directly to the `EntityListProvider`:
 
 ```tsx
-<FeedProvider
+<EntityListProvider
   metadataFilters={{
     includes: { category: "tech", featured: true },
     doesNotInclude: { deprecated: true },
@@ -63,10 +63,10 @@ To set static metadata filters at feed initialization, pass them directly to the
   }}
 >
   <MyFeedComponent />
-</FeedProvider>
+</EntityListProvider>
 ```
 
-This setup ensures that the feed includes:
+This setup ensures that the entity list includes:
 
 -   Entities where `metadata.category` is "tech" and `metadata.featured` is `true`.
 -   Entities where `metadata.deprecated` is not `true`.
@@ -75,10 +75,10 @@ This setup ensures that the feed includes:
 
 ##### **2. Dynamically Updating Filters Based on User Interaction**
 
-Developers can allow users to refine the feed dynamically using the `setMetadataFilters` function:
+Developers can allow users to refine the entity list dynamically using the `setMetadataFilters` function:
 
 ```tsx
-const { setMetadataFilters, infusedEntities, loadMore } = useFeed();
+const { setMetadataFilters, infusedEntities, loadMore } = useEntityList();
 
 const applyFilters = () => {
   setMetadataFilters({
@@ -89,7 +89,7 @@ const applyFilters = () => {
 
 return (
   <div>
-    <h1>Filtered Feed</h1>
+    <h1>Filtered Entity List</h1>
     <button onClick={applyFilters}>Apply Tech Filters</button>
     <button onClick={() => setMetadataFilters(null)}>Clear Filters</button>
     <ul>
@@ -105,14 +105,14 @@ return (
 );
 ```
 
-In this example, clicking the "Apply Tech Filters" button updates the feed to include entities categorized as "tech" and with an `author` key in their metadata.
+In this example, clicking the "Apply Tech Filters" button updates the entity list to include entities categorized as "tech" and with an `author` key in their metadata.
 
 #### **Important Notes**
 
--   Metadata Filters are powerful for working with unstructured data, allowing highly customized feeds.
--   Filters are applied immediately, and the feed resets to reflect the updated conditions.
+-   Metadata Filters are powerful for working with unstructured data, allowing highly customized entity lists.
+-   Filters are applied immediately, and the entity list resets to reflect the updated conditions.
 -   Passing `null` to `setMetadataFilters` clears all metadata-based filtering.
 
 #### **Conclusion**
 
-Metadata Filters provide a robust mechanism to filter entities based on the `metadata` property. With support for key-value matching, key existence validation, and exclusion conditions, these filters allow developers to implement advanced and highly specific feed customization. Whether setting static filters at initialization or dynamically adjusting them based on user input, Metadata Filters make it easy to tailor the feed to diverse application needs.
+Metadata Filters provide a robust mechanism to filter entities based on the `metadata` property. With support for key-value matching, key existence validation, and exclusion conditions, these filters allow developers to implement advanced and highly specific entity list customization. Whether setting static filters at initialization or dynamically adjusting them based on user input, Metadata Filters make it easy to tailor the entity list for diverse application needs.

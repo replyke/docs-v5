@@ -3,7 +3,7 @@
 
 #### **The Challenge**
 
-When Replyke fetches data for a feed, it retrieves only the information it manages internally. While this is sufficient for many applications, there are cases where entities need additional external data to be meaningful.
+When Replyke fetches data for a list, it retrieves only the information it manages internally. While this is sufficient for many applications, there are cases where entities need additional external data to be meaningful.
 
 For example: A product entity might need inventory details from an external inventory management system.
 
@@ -11,13 +11,13 @@ Without a mechanism to merge external data into Replyke’s entities, developers
 
 #### **The Solution**
 
-The `infuseData` callback provides a seamless way to integrate external data into entities fetched by Replyke. This function is passed to the `FeedProvider` and is invoked for each entity in the feed. The `infuseData` function:
+The `infuseData` callback provides a seamless way to integrate external data into entities fetched by Replyke. This function is passed to the `EntityListProvider` and is invoked for each entity in the list. The `infuseData` function:
 
-1.  Receives a `referenceId` for each entity.
+1.  Receives a `foreignId` for each entity.
 2.  Fetches additional data for that entity from an external source (e.g., another database or API).
 3.  Merges the fetched data with the entity, creating a complete data object that includes both Replyke-managed and externally sourced information.
 
-This approach ensures that developers can leverage Replyke’s powerful feed capabilities while maintaining access to essential external data.
+This approach ensures that developers can leverage Replyke’s powerful list capabilities while maintaining access to essential external data.
 
 #### **How It Works**
 
@@ -35,7 +35,7 @@ Here is a practical example of how to use the `infuseData` callback:
 
 ```typescript
 import React from 'react';
-import { FeedProvider, useFeed } from 'replyke';
+import { EntityListProvider, useEntityList } from 'replyke';
 
 const fetchInventoryData = async (referenceId: string) => {
   try {
@@ -57,7 +57,7 @@ const ProductFeed = () => {
     resetEntities,
     loading,
     hasMore,
-  } = useFeed();
+  } = useEntityList();
 
   return (
     <div>
@@ -79,9 +79,9 @@ const ProductFeed = () => {
 };
 
 const App = () => (
-  <FeedProvider infuseData={fetchInventoryData}>
+  <EntityListProvider infuseData={fetchInventoryData}>
     <ProductFeed />
-  </FeedProvider>
+  </EntityListProvider>
 );
 
 export default App;
@@ -90,8 +90,8 @@ export default App;
 
 #### **Key Takeaways**
 
--   The `infuseData` callback bridges the gap between Replyke’s feed data and your application’s external data requirements.
+-   The `infuseData` callback bridges the gap between Replyke’s list data and your application’s external data requirements.
 -   It ensures that entities can be enriched with external data dynamically.
 -   The process is efficient, leveraging caching to minimize redundant fetches.
 
-This feature empowers developers to create rich, data-complete applications while maintaining the flexibility and power of Replyke feeds.
+This feature empowers developers to create rich, data-complete applications while maintaining the flexibility and power of Replyke entity lists.

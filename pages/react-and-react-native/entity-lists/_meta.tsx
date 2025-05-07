@@ -1,6 +1,6 @@
 export default {
-  provider: "Feed Provider",
-  hook: "useFeed Hook",
+  provider: "Entity List Provider",
+  hook: "useEntityList Hook",
   infuseData: "infuseData",
   filters: "Filters",
 };

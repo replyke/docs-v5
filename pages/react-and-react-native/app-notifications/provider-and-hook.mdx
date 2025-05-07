@@ -1,4 +1,3 @@
-
 ## App Notifications Provider and useAppNotifications Hook
 
 Like other features of Replyke, the notifications feature uses a context provider and an easy-to-use hook.
@@ -7,25 +6,36 @@ To enable notifications, wrap the content that needs access to the notifications
 
 Once wrapped, any child components can access the notifications data and functionality via the **useAppNotifications** hook.
 
-----------
+---
 
 ### AppNotificationsProvider Props
 
 The `AppNotificationsProvider` accepts two optional props:
 
 1.  **limit**: Specifies the number of notifications to fetch per batch. This strikes a balance between efficiency and the number of API calls. The default value is `10`, which is suitable for most use cases.
-    
-2.  **notificationTemplates**: An object containing templates to customize notification messages. If not provided, default templates are used. This feature will be explored in a subsequent chapter.
-    
+2.  **notificationTemplates**: An object containing templates to customize notification messages. If not provided, default templates are used. This feature will be explored in the next chapter.
 
-----------
+Example usage with custom template
+
+```typescript
+<AppNotificationsProvider notificationTemplates={{
+    entityComment: {
+      "title": "$initiatorName left a comment on your post \"$entityTitle\"",
+      "content": "$commentContent"
+    }
+}}>
+    { //* Render User's notifications *// }
+</AppNotificationsProvider>
+```
+
+---
 
 ### Using the useAppNotifications Hook
 
 The **useAppNotifications** hook provides the following data and functions:
 
 ```typescript
-interface AppNotificationsContextValues  {
+interface AppNotificationsContextValues {
   appNotifications: UnifiedAppNotification[];
   unreadAppNotificationsCount: number;
   loading: boolean;
@@ -39,24 +49,17 @@ interface AppNotificationsContextValues  {
 #### Available Data:
 
 1.  **appNotifications**: An array of all fetched notifications, ordered by creation time.
-    
 2.  **unreadAppNotificationsCount**: The number of unread notifications.
-    
 3.  **loading**: A flag indicating if more notifications are currently being fetched.
-    
 4.  **hasMore**: A flag indicating if there are more notifications to fetch.
-    
 
 #### Available Functions:
 
 1.  **loadMore**: Fetches the next batch of notifications.
-    
 2.  **markNotificationAsRead**: Expects a notification ID, and marks that notification as "read".
-    
 3.  **resetAppNotifications**: Resets and refetches notifications, starting with the first batch.
-    
 
-----------
+---
 
 ### Creating an Engaging Notifications Experience
 

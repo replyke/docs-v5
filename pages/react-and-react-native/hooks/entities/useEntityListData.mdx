@@ -1,15 +1,15 @@
-# `useFeedData`
+# `useEntityListData`
 
 ## Overview
 
-The `useFeedData` hook provides a powerful and flexible solution for managing and presenting entity data in a feed. Unlike individual hooks like `useFetchEntities` or `useCreateEntity`, this hook combines functionalities such as fetching, creating, deleting, and managing entities while offering advanced filter customizations and state management. It is ideal for implementing dynamic feeds with tailored sorting and filtering options.
+The `useEntityListData` hook provides a powerful and flexible solution for managing and presenting entity data in a feed. Unlike individual hooks like `useFetchEntities` or `useCreateEntity`, this hook combines functionalities such as fetching, creating, deleting, and managing entities while offering advanced filter customizations and state management. It is ideal for implementing dynamic feeds with tailored sorting and filtering options.
 
 ---
 
 ## Usage Example
 
 ```tsx
-import { useFeedData } from "@replyke/react-js";
+import { useEntityListData } from "@replyke/react-js";
 
 function Feed() {
   const {
@@ -23,7 +23,7 @@ function Feed() {
     resetEntities,
     createEntity,
     deleteEntity,
-  } = useFeedData({ limit: 10, sortBy: "hot" });
+  } = useEntityListData({ limit: 10, sortBy: "hot" });
 
   const handleCreateEntity = async () => {
     try {

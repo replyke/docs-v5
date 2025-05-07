@@ -9,9 +9,10 @@ Replyke addresses many common validation needs out of the box, such as enforcing
 
 To solve this, Replyke leverages a webhook-based system. Developers can define custom validation logic by implementing webhooks triggered during the creation or updating of users and entities. This ensures that all relevant data is validated on the developer’s server before the operation is finalized in Replyke. The webhook response determines whether the operation proceeds or is rejected, allowing for fine-grained control over data integrity.
 
-By default, no webhooks are configured for new projects, meaning that Replyke’s built-in validation handles all operations. While this is sufficient for dvelopment, implementing webhooks is highly recommended for applications in production that require enhanced security and data validation to maintain the integrity of their data.
+By default, no webhooks are configured for new projects, meaning that no further validation takes place beyond Replyke’s built-in validation. While this is sufficient for development, implementing webhooks is highly recommended for applications in production that require enhanced security and data validation to maintain the integrity of their data.
 
 ## Webhooks for Validation
+
 Replyke provides developers with the ability to set up four validation webhooks. These webhooks allow developers to implement custom validation logic for both user and entity operations. A single shared secret from the Replyke dashboard is sufficient for all webhooks. However, it is recommended to periodically rotate the secret for enhanced security.
 
 For reference, the setup for validation webhooks is similar to the notifications webhook integration described in [App Notifications Webhook Integration](https://docs.replyke.com/app-notifications/webhook-integration), with the added requirement of sending a signed response.
@@ -21,20 +22,21 @@ For reference, the setup for validation webhooks is similar to the notifications
 1. **User Created**
    This webhook validates user details before a user is created. The payload includes the following fields:
 
-   | Field        | Description                                    |
-   | ------------ | ---------------------------------------------- |
-   | `projectId`  | Always included                                |
-   | `data`       | Object containing the user details:            |
-   |              | - `referenceId`: Optional, unique reference from external system    |
-   |              | - `email`: Optional, user’s email address      |
-   |              | - `name`: Optional, user’s name               |
-   |              | - `username`: Optional, username               |
-   |              | - `avatar`: Optional, URL to the avatar image  |
-   |              | - `bio`: Optional, user biography              |
-   |              | - `location`: Optional, user’s location       |
-   |              | - `birthdate`: Optional, user’s birthdate     |
-   |              | - `metadata`: Optional, free-form metadata     |
-   |              | - `secureMetadata`: Optional, sensitive data   |
+   | Field       | Description                                                                                        |
+   | ----------- | -------------------------------------------------------------------------------------------------- |
+   | `projectId` | Always included                                                                                    |
+   | `data`      | Object containing the user details:                                                                |
+   |             | - `foreignId`: If integrating Replyke with an external user system, a foreign ID will be provided. |
+   |             | - `role`: Always "visitor" for new users                                                           |
+   |             | - `email`: Optional, user’s email address                                                          |
+   |             | - `name`: Optional, user’s name                                                                    |
+   |             | - `username`: Optional, username                                                                   |
+   |             | - `avatar`: Optional, URL to the avatar image                                                      |
+   |             | - `bio`: Optional, user biography                                                                  |
+   |             | - `location`: Optional, user’s location                                                            |
+   |             | - `birthdate`: Optional, user’s birthdate                                                          |
+   |             | - `metadata`: Optional, free-form metadata                                                         |
+   |             | - `secureMetadata`: Optional, sensitive data                                                       |
 
 2. **User Updated**
    This webhook validates user details before a user is updated. The payload structure is similar to the one used for user creation but includes only the updated fields within the `data` object.
@@ -42,27 +44,31 @@ For reference, the setup for validation webhooks is similar to the notifications
 3. **Entity Created**
    This webhook validates entity details before an entity is created. The payload includes the following fields:
 
-   | Field        | Description                                    |
-   | ------------ | ---------------------------------------------- |
-   | `projectId`  | Always included                                |
-   | `data`       | Object containing entity details:              |
-   |              | - `referenceId`: Optional, unique reference from external data set   |
-   |              | - `userId`: Optional, creator’s ID            |
-   |              | - `title`: Optional, title of the entity       |
-   |              | - `content`: Optional, content of the entity   |
-   |              | - `media`: Optional, associated media          |
-   |              | - `keywords`: Optional, keywords for the entity|
-   |              | - `location`: Optional, geographic location    |
-   |              | - `metadata`: Optional, free-form metadata     |
-   | `initiatorId`| Optional, ID of the user initiating the action |
+   | Field         | Description                                                                                                       |
+   | ------------- | ----------------------------------------------------------------------------------------------------------------- |
+   | `projectId`   | Always included                                                                                                   |
+   | `data`        | Object containing entity details:                                                                                 |
+   |               | - `foreignId`: If entity data is attached to a resource from an external data set, a foreign ID will be provided. |
+   |               | - `resourceId`: Entities could be grouped by resource ID to separate feeds.                                       |
+   |               | - `userId`: Optional, creator’s ID                                                                                |
+   |               | - `title`: Optional, title of the entity                                                                          |
+   |               | - `content`: Optional, content of the entity                                                                      |
+   |               | - `attachments`: Optional, file attachments                                                                             |
+   |               | - `mentions`: Optional, array of user mentions                                                                             |
+   |               | - `keywords`: Optional, keywords for the entity                                                                   |
+   |               | - `location`: Optional, geographic location                                                                       |
+   |               | - `metadata`: Optional, free-form metadata                                                                        |
+   | `initiatorId` | Optional, ID of the user initiating the action                                                                    |
 
 4. **Entity Updated**
    This webhook validates entity details before an entity is updated. The payload structure is similar to the one used for entity creation but includes only the updated fields within the `data` object.
 
 ### HMAC Signature and Security
+
 To ensure secure communication between Replyke and your server, each webhook request includes an HMAC signature. This signature verifies the authenticity of the request and prevents tampering. The HMAC signature is calculated using the shared secret and the payload.
 
 #### Supporting Functions
+
 Here are supporting functions for HMAC validation and response signing:
 
 ```typescript
@@ -128,6 +134,7 @@ export function handleError(
 ```
 
 ### Example Implementation: User Creation Webhook
+
 ```typescript
 import { Request as ExReq, Response as ExRes } from "express";
 import {
@@ -149,7 +156,10 @@ export default async (req: ExReq, res: ExRes) => {
     console.log("Project ID:", projectId, "User Data:", data);
 
     const responsePayload = { valid: true };
-    const responseSignature = signResponsePayload(responsePayload, sharedSecret!);
+    const responseSignature = signResponsePayload(
+      responsePayload,
+      sharedSecret!
+    );
 
     res
       .status(200)
@@ -162,6 +172,7 @@ export default async (req: ExReq, res: ExRes) => {
 ```
 
 ### Example Implementation: Entity Creation Webhook
+
 ```typescript
 import { Request as ExReq, Response as ExRes } from "express";
 import {
@@ -180,10 +191,20 @@ export default async (req: ExReq, res: ExRes) => {
     validateIncomingHmac(req, sharedSecret!);
 
     // Step 2: Add your entity-specific validation logic here
-    console.log("Project ID:", projectId, "Entity Data:", data, "Initiator ID:", initiatorId);
+    console.log(
+      "Project ID:",
+      projectId,
+      "Entity Data:",
+      data,
+      "Initiator ID:",
+      initiatorId
+    );
 
     const responsePayload = { valid: true };
-    const responseSignature = signResponsePayload(responsePayload, sharedSecret!);
+    const responseSignature = signResponsePayload(
+      responsePayload,
+      sharedSecret!
+    );
 
     res
       .status(200)
@@ -196,4 +217,3 @@ export default async (req: ExReq, res: ExRes) => {
 ```
 
 These examples demonstrate complete webhook implementations and supporting functions, ensuring secure and accurate handling of data. Developers using other languages should replicate the HMAC signature logic to maintain compatibility.
-

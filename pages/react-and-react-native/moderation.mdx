@@ -12,11 +12,11 @@ The following example demonstrates how to implement entity reporting in a React 
 
 ```tsx
 import React, { useCallback, useMemo, useState } from "react";
-import { useUser, useSubmitReport, ReportReasonKey, reportReasons } from "@replyke/react-js";
+import { useUser, useCreateReport, ReportReasonKey, reportReasons } from "@replyke/react-js";
 
 const ReportPostModal = ({ reportedPost, onClose }) => {
   const { user } = useUser();
-  const { submitEntityReport } = useSubmitReport();
+  const { createEntityReport } = useCreateReport();
 
   const [submitting, setSubmitting] = useState(false);
   const [reason, setReason] = useState<ReportReasonKey | null>(null);
@@ -33,7 +33,7 @@ const ReportPostModal = ({ reportedPost, onClose }) => {
       }
 
       setSubmitting(true);
-      await submitEntityReport({ targetId: reportedPost.id, reason });
+      await createEntityReport({ targetId: reportedPost.id, reason });
       alert("Report submitted successfully.");
       onClose();
     } catch (err) {

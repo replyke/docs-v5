@@ -1,7 +1,7 @@
 ### Location Filters
 
 #### Overview
-The Location Filters feature in Replyke allows users to filter entities within a specified radius of a given geographic coordinate. This is particularly useful for applications that involve location-based content, such as local events, businesses, or nearby user posts. With Location Filters, users can narrow down their feed to display only entities relevant to a specific location.
+The Location Filters feature in Replyke allows you or your users to filter entities within a specified radius of a given geographic coordinate. This is particularly useful for applications that involve location-based content, such as local events, businesses, or nearby user posts. With Location Filters, users can narrow down their entity list (content feed) to display only entities relevant to a specific location.
 
 #### How It Works
 The `locationFilters` prop is used to define the geographic filter parameters. The filter expects an object of type `LocationFilters`, which contains the latitude, longitude, and radius (in meters) to define the area of interest.
@@ -14,7 +14,7 @@ interface LocationFilters {
 }
 ```
 
-This object can be provided directly to the `FeedProvider` component to apply static location filtering during initialization. To dynamically adjust the location filters after initialization, the `useFeed` hook provides the `setLocationFilters` method.
+This object can be provided directly to the `EntityListProvider` component to apply static location filtering during initialization. To dynamically adjust the location filters after initialization, the `useEntityList` hook provides the `setLocationFilters` method.
 
 ```typescript
 setLocationFilters: (location: LocationFilters | null) => void;
@@ -26,7 +26,7 @@ setLocationFilters: (location: LocationFilters | null) => void;
 #### Example Usage
 
 ##### Static Location Filters
-To initialize the feed with location filters:
+To initialize the entity list with location filters:
 
 ```tsx
 const locationFilters = {
@@ -35,17 +35,17 @@ const locationFilters = {
   radius: 5000, // 5 km
 };
 
-<FeedProvider locationFilters={locationFilters}>
-  {/* Your feed content here */}
-</FeedProvider>;
+<EntityListProvider locationFilters={locationFilters}>
+  {/* Your content feed here */}
+</EntityListProvider>;
 ```
 
 ##### Dynamic Location Filters
-To change the location filter dynamically, use the `useFeed` hook:
+To change the location filter dynamically, use the `useEntityList` hook:
 
 ```tsx
 const MyComponent = () => {
-  const { setLocationFilters } = useFeed();
+  const { setLocationFilters } = useEntityList();
 
   const updateLocation = () => {
     setLocationFilters({
@@ -74,5 +74,5 @@ const MyComponent = () => {
 3. **No Location Filter**: If `setLocationFilters` is set to `null`, the system will ignore location as a filtering criterion when fetching entities.
 
 #### Conclusion
-Location Filters provide a powerful way to enhance feed relevance by focusing on geographic proximity. Whether used statically during initialization or dynamically via the `useFeed` hook, this feature enables users to tailor their feeds for a highly localized experience. Combine it with other filters like Keywords or Title Filters for even more precise content curation.
+Location Filters provide a powerful way to enhance entity lists' relevance by focusing on geographic proximity. Whether used statically during initialization or dynamically via the `useEntityList` hook, this feature enables users to tailor their content feeds for a highly localized experience. Combine it with other filters like Keywords or Title Filters for even more precise content curation.
 

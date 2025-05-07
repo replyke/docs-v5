@@ -1,3 +1,5 @@
+import { Callout } from "nextra/components";
+
 ## Setting Up a Webhook for App Notifications
 
 When a new app notification is created by Replyke, developers can configure their server to be notified about the event. This is achieved by setting up a webhook endpoint on the developer’s server. A webhook is essentially an HTTP endpoint that is triggered by Replyke whenever a notification is generated. The webhook will receive a payload containing all the relevant details about the notification, enabling developers to send corresponding push notifications or perform other actions.
@@ -19,6 +21,10 @@ The payload sent to the webhook contains the following details:
 ---
 
 ### Securing Your Webhook
+
+<Callout type="info">
+ Verifying the integrity of a notification - covered in more detail below - is similar to verifying other webhooks, such as those triggered when an entity or user is created or updated, as discussed in the security section of this documentation.
+</Callout>
 
 To ensure the integrity of the data received by your webhook, Replyke uses a secure signing mechanism:
 
