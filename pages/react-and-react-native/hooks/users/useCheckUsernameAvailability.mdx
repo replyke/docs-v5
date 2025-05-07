@@ -14,9 +14,9 @@ function UsernameCheck({ username }: { username: string }) {
 
   const handleCheckAvailability = async () => {
     try {
-      const isAvailable = await checkUsernameAvailability({ username });
+      const {available} = await checkUsernameAvailability({ username });
       console.log(
-        isAvailable ? "Username is available." : "Username is already taken."
+        available ? "Username is available." : "Username is already taken."
       );
     } catch (error) {
       console.error("Failed to check username availability:", error.message);
@@ -43,4 +43,4 @@ The function resolves with a boolean value:
 
 | Return Value | Type      | Description                                         |
 |--------------|-----------|-----------------------------------------------------|
-| `isAvailable` | `boolean` | `true` if the username is available, otherwise `false`. |
+| `available` | `boolean` | `true` if the username is available, otherwise `false`. |

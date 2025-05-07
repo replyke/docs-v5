@@ -1,8 +1,9 @@
 export default {
-  useFetchSingleUser: "useFetchSingleUser",
+  useFetchUser: "useFetchUser",
+  useFetchUserByForeignId: "useFetchUserByForeignId",
   useFetchUserFollowersCount: "useFetchUserFollowersCount",
   useFetchUserFollowingCount: "useFetchUserFollowingCount",
-  useFetchUserSuggestions: "useFetchUserSuggestions",
+  useFetchMentionSuggestions: "useFetchMentionSuggestions",
   useCheckUsernameAvailability: "useCheckUsernameAvailability",
   useUpdateUser: "useUpdateUser",
 };

@@ -1,21 +1,21 @@
-# `useFetchSingleUser`
+# `useFetchUser`
 
 ## Overview
 
-The `useFetchSingleUser` hook is used to retrieve detailed information about a specific user within the current project by their user ID. This can be useful for displaying user profiles or fetching data for interactions.
+The `useFetchUser` hook is used to retrieve detailed information about a specific user within the current project by their user ID. This can be useful for displaying user profiles or fetching data for interactions.
 
 
 ## Usage Example
 
 ```tsx
-import { useFetchSingleUser } from "@replyke/react-js";
+import { useFetchUser } from "@replyke/react-js";
 
 function UserProfile({ userId }: { userId: string }) {
-  const fetchSingleUser = useFetchSingleUser();
+  const fetchUser = useFetchUser();
 
   const handleFetchUser = async () => {
     try {
-      const user = await fetchSingleUser({ userId });
+      const user = await fetchUser({ userId });
       console.log("Fetched user details:", user);
     } catch (error) {
       console.error("Failed to fetch user details:", error.message);

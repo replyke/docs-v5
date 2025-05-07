@@ -14,17 +14,18 @@ function FollowingCountDisplay({ userId }: { userId: string }) {
 
   const handleFetchFollowingCount = async () => {
     try {
-      const { count } = await fetchUserFollowingCount(userId);
+      const { count } = await fetchUserFollowingCount({ userId });
       console.log(`User is following ${count} users.`);
     } catch (error) {
       console.error("Failed to fetch following count:", error.message);
     }
   };
 
-  return <button onClick={handleFetchFollowingCount}>Get Following Count</button>;
+  return (
+    <button onClick={handleFetchFollowingCount}>Get Following Count</button>
+  );
 }
 ```
-
 
 ## Parameters & Returns
 
@@ -32,14 +33,14 @@ function FollowingCountDisplay({ userId }: { userId: string }) {
 
 The hook returns a function that accepts the following parameter:
 
-| Parameter   | Type     | Required | Description                      |
-|-------------|----------|----------|----------------------------------|
-| `userId`    | `string` | Yes      | The ID of the user to fetch following count for. |
+| Parameter | Type     | Required | Description                                      |
+| --------- | -------- | -------- | ------------------------------------------------ |
+| `userId`  | `string` | Yes      | The ID of the user to fetch following count for. |
 
 ### Returns
 
 The function resolves with an object containing the following count:
 
-| Return Value | Type              | Description                               |
-|--------------|-------------------|-------------------------------------------|
+| Return Value | Type                | Description                                                               |
+| ------------ | ------------------- | ------------------------------------------------------------------------- |
 | `count`      | `{ count: number }` | An object containing the number of users the specified user is following. |

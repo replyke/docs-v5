@@ -1,20 +1,20 @@
-# `useFetchUserSuggestions`
+# `useFetchMentionSuggestions`
 
 ## Overview
 
-The `useFetchUserSuggestions` hook is used to retrieve a list of suggested users based on a search query. This is commonly used in features like @mentions or user search.
+The `useFetchMentionSuggestions` hook is used to retrieve a list of suggested users based on a search query. This is commonly used in features like @mentions or user search.
 
 ## Usage Example
 
 ```tsx
-import { useFetchUserSuggestions } from "@replyke/react-js";
+import { useFetchMentionSuggestions } from "@replyke/react-js";
 
 function UserSuggestions({ query }: { query: string }) {
-  const fetchUserSuggestions = useFetchUserSuggestions();
+  const fetchMentionSuggestions = useFetchMentionSuggestions();
 
   const handleFetchSuggestions = async () => {
     try {
-      const suggestions = await fetchUserSuggestions(query);
+      const suggestions = await fetchMentionSuggestions({query});
       console.log("User suggestions:", suggestions);
     } catch (error) {
       console.error("Failed to fetch user suggestions:", error.message);
