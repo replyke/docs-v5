@@ -49,10 +49,11 @@ The hook returns a function that accepts an object with the following fields:
 | `update`    | `object`             | Yes      | An object containing the fields to update.     |
 | `update.title` | `string \| null`    | No       | The new title for the entity.                  |
 | `update.content` | `string \| null`  | No       | The new content for the entity.                |
-| `update.media`   | `Record<string, any>[]` | No   | The updated media items for the entity.        |
+| `update.attachments`   | `Record<string, any>[]` | No   | The updated attachments items for the entity.        |
 | `update.keywords`| `string[]`        | No       | The updated keywords for the entity.           |
 | `update.location`| `object`          | No       | The new geographic location for the entity.    |
 | `update.metadata`| `Record<string, any>` | No   | Additional metadata to update for the entity.  |
+| `update.mentions`| `Mention[]>` | No   | Array of mentioned users  |
 
 ### Returns
 

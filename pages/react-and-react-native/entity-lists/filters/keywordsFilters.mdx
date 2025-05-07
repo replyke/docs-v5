@@ -78,7 +78,7 @@ This setup ensures that the list is pre-configured to show only posts about "Jav
 To dynamically change the filters, such as when a user clicks a keyword button, use the `updateKeywordsFilters` function from the `useEntityList` hook:
 
 ```tsx
-const { updateKeywordsFilters, infusedEntities, loadMore } = useEntityList();
+const { updateKeywordsFilters, entities, loadMore } = useEntityList();
 
 const handleKeywordClick = (keyword: string) => {
   updateKeywordsFilters("add", "includes", keyword);
@@ -93,10 +93,10 @@ return (
       <button onClick={() => handleKeywordClick("Angular")}>Exclude Angular</button>
     </div>
     <ul>
-      {infusedEntities.map((post) => (
-        <li key={post.referenceId}>
-          <h2>{post.title}</h2>
-          <p>{post.content}</p>
+      {entities.map((entity) => (
+        <li key={entity.id}>
+          <h2>{entity.title}</h2>
+          <p>{entity.content}</p>
         </li>
       ))}
     </ul>

@@ -1,20 +1,20 @@
-# `useFetchSingleEntity`
+# `useFetchEntityByShortId`
 
 ## Overview
 
-The `useFetchSingleEntity` hook is used to retrieve details of a specific entity by providing one of its identifiers, such as `entityId`, `referenceId`, or `shortId`. This hook can optionally create a new entity if it is not found, depending on the configuration provided during initialization.
+The `useFetchEntityByShortId` hook is used to retrieve details of a specific entity by providing its `shortId`.
 
 ## Usage Example
 
 ```tsx
-import { useFetchSingleEntity } from "@replyke/react-js";
+import { useFetchEntityByShortId } from "@replyke/react-js";
 
 function EntityDetails({ entityId }: { entityId: string }) {
-  const fetchSingleEntity = useFetchSingleEntity();
+  const fetchEntityByShortId = useFetchEntityByShortId();
 
   const handleFetchEntity = async () => {
     try {
-      const entity = await fetchSingleEntity({
+      const entity = await fetchEntityByShortId({
         entityId,
       });
 
@@ -36,11 +36,8 @@ The hook returns a function that accepts an object with the following fields:
 
 | Parameter       | Type      | Required | Description                                                                 |
 |-----------------|-----------|----------|-----------------------------------------------------------------------------|
-| `entityId`      | `string`  | No       | The unique ID of the entity to fetch.                                      |
-| `referenceId`   | `string`  | No       | A reference ID that can be used to identify the entity.                    |
-| `shortId`       | `string`  | No       | A short identifier for the entity.                                         |
+| `shortId`       | `string`  | Yes       | The short identifier for the entity.                                         |
 
-At least one of `entityId`, `referenceId`, or `shortId` must be provided.
 
 ### Returns
 

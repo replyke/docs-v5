@@ -64,7 +64,7 @@ This setup ensures that only entities with content are included, and that conten
 You can also dynamically adjust the content filters based on user actions, such as clicking a button:
 
 ```tsx
-const { setContentFilters, infusedEntities, loadMore } = useEntityList();
+const { setContentFilters, entities, loadMore } = useEntityList();
 
 const handleFilterUpdate = (newIncludes: string[], newExcludes: string[]) => {
   setContentFilters({ includes: newIncludes, doesNotInclude: newExcludes });
@@ -80,8 +80,8 @@ return (
       <button onClick={() => handleFilterUpdate(null)}>Clear Filters</button>
     </div>
     <ul>
-      {infusedEntities.map((entity) => (
-        <li key={entity.referenceId}>
+      {entities.map((entity) => (
+        <li key={entity.id}>
           <h2>{entity.title}</h2>
           <p>{entity.content}</p>
         </li>

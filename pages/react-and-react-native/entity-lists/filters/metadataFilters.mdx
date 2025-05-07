@@ -78,7 +78,7 @@ This setup ensures that the entity list includes:
 Developers can allow users to refine the entity list dynamically using the `setMetadataFilters` function:
 
 ```tsx
-const { setMetadataFilters, infusedEntities, loadMore } = useEntityList();
+const { setMetadataFilters, entities, loadMore } = useEntityList();
 
 const applyFilters = () => {
   setMetadataFilters({
@@ -93,8 +93,8 @@ return (
     <button onClick={applyFilters}>Apply Tech Filters</button>
     <button onClick={() => setMetadataFilters(null)}>Clear Filters</button>
     <ul>
-      {infusedEntities.map((entity) => (
-        <li key={entity.referenceId}>
+      {entities.map((entity) => (
+        <li key={entity.id}>
           <h2>{entity.title}</h2>
           <p>Metadata: {JSON.stringify(entity.metadata)}</p>
         </li>

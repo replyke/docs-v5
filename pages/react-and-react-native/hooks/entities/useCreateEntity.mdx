@@ -40,13 +40,16 @@ The hook returns a function that accepts an object with the following fields:
 
 | Parameter       | Type                  | Required | Description |
 |-----------------|-----------------------|----------|-------------|
-| `referenceId`   | `string`             | No       | An optional reference ID to associate with the entity. |
+| `foreignId`   | `string`             | No       | An optional foreign ID to associate with the entity. |
+| `sourceId`   | `string`             | No       | An optional free-form source ID to group entities into separate entity "pools". |
 | `title`         | `string`             | No       | The title of the entity. |
 | `content`       | `string`             | No       | The main content of the entity. |
-| `media`         | `any[]`              | No       | An array of media items (e.g., images, videos) associated with the entity. |
+| `attachments`         | `any[]`              | No       | An array of objects representing attachments (e.g., images, videos, files) associated with the entity, with data about those attachments. |
 | `keywords`      | `string[]`           | No       | An array of keywords to tag the entity. |
+| `mentions`      | `Mention[]`           | No       | An array of user mentions in the entity. |
 | `location`      | `object`             | No       | The geographic location (latitude, longitude) associated with the entity. |
 | `metadata`      | `Record<string, any>`| No       | Additional metadata to store with the entity. |
+| `excludeUserId`      | `boolean`| No       | By default, when this function is called, the ID of the logged in user is attached as the author, but it could be omitted by passing this flag as 'false'. |
 
 ### Returns
 The function resolves with an object representing the newly created entity:

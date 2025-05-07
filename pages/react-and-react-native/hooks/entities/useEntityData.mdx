@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `useEntityData` hook is a centralized utility for managing and interacting with a single entity in your application. Unlike the individual hooks such as `useFetchSingleEntity` or `useEntityVotes`, this hook integrates several functionalities to provide a streamlined approach for fetching, updating, deleting, and voting on a specific entity. It also includes logic to increment views and handle optimistic updates.
+The `useEntityData` hook is a centralized utility for managing and interacting with a single entity in your application. Unlike the individual hooks such as `useFetchEntity` or `useUpdateEntity`, this hook integrates several functionalities to provide a streamlined approach for fetching, updating, deleting, and voting on a specific entity. It also includes logic to increment views and handle optimistic updates.
 
 ## Usage Example
 
@@ -53,33 +53,33 @@ function EntityDetails({ entityId }: { entityId: string }) {
 
 ### Parameters
 
-The hook accepts an object with the following fields:
+The hook accepts an object with the following fields. None are mandatory individually, but at least one of the ID properties, or a complete entity object, must be provided:
 
 | Parameter          | Type      | Required | Description                                                            |
 | ------------------ | --------- | -------- | ---------------------------------------------------------------------- |
-| `entityId`         | `string`  | No       | The ID of the entity to fetch.                                         |
-| `referenceId`      | `string`  | No       | A reference ID to fetch the entity.                                    |
-| `shortId`          | `string`  | No       | A short ID to fetch the entity.                                        |
 | `entity`           | `Entity`  | No       | If provided, skips fetching and uses this entity as the initial value. |
+| `entityId`         | `string`  | No       | The ID of the entity to fetch.                                         |
+| `foreignId`        | `string`  | No       | A foreign ID to fetch the entity.                                      |
+| `shortId`          | `string`  | No       | A short ID to fetch the entity.                                        |
 | `createIfNotFound` | `boolean` | No       | If `true`, creates the entity if not found during fetching.            |
 
 ### Returns
 
 The hook returns an object with the following fields:
 
-| Return Value           | Type                                                         | Description                                             |
-| ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------- |
-| `entity`               | `Entity \| undefined`                                       | The fetched entity.            |
-| `userUpvotedEntity`    | `boolean`                                                  | Indicates if the current user has upvoted the entity.   |
-| `userDownvotedEntity`  | `boolean`                                                  | Indicates if the current user has downvoted the entity. |
-| `upvoteEntity`         | `() => void`                                              | Function to upvote the entity.                          |
-| `removeEntityUpvote`   | `() => void`                                              | Function to remove the user's upvote.                   |
-| `downvoteEntity`       | `() => void`                                              | Function to downvote the entity.                        |
-| `removeEntityDownvote` | `() => void`                                              | Function to remove the user's downvote.                 |
-| `updateEntity`         | `(props: Pick<UpdateEntityProps, "update">) => Promise<Entity \| undefined>` | Function to update the entity. |
-| `incrementEntityViews` | `() => Promise<void>`                                     | Function to increment the entity's view count.          |
-| `deleteEntity`         | `() => Promise<void>`                                     | Function to delete the entity.                          |
-
+| Return Value           | Type                                                                         | Description                                             |
+| ---------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `entity`               | `Entity \| null \| undefined`                                                        | The fetched entity.                                     |
+| `setEntity`       |<code>React.Dispatch&lt;React.SetStateAction&lt;Entity &#124; null &#124; undefined&gt;&gt;</code>                                                        | The entity setter function.                                     |
+| `userUpvotedEntity`    | `boolean`                                                                    | Indicates if the current user has upvoted the entity.   |
+| `userDownvotedEntity`  | `boolean`                                                                    | Indicates if the current user has downvoted the entity. |
+| `upvoteEntity`         | `() => void`                                                                 | Function to upvote the entity.                          |
+| `removeEntityUpvote`   | `() => void`                                                                 | Function to remove the user's upvote.                   |
+| `downvoteEntity`       | `() => void`                                                                 | Function to downvote the entity.                        |
+| `removeEntityDownvote` | `() => void`                                                                 | Function to remove the user's downvote.                 |
+| `updateEntity`         | `(props: Pick<UpdateEntityProps, "update">) => Promise<Entity \| undefined>` | Function to update the entity.                          |
+| `incrementEntityViews` | `() => Promise<void>`                                                        | Function to increment the entity's view count.          |
+| `deleteEntity`         | `() => Promise<void>`                                                        | Function to delete the entity.                          |
 
 ---
 
@@ -87,7 +87,7 @@ The hook returns an object with the following fields:
 
 ### Fetching Entity
 
-The hook automatically fetches the entity using one of the provided identifiers (`entityId`, `referenceId`, or `shortId`). If an `entity` object is passed as a parameter, fetching is skipped.
+The hook automatically fetches the entity using one of the provided identifiers (`entityId`, `foreignId`, or `shortId`). If an `entity` object is passed as a parameter, fetching is skipped.
 
 ### Voting Functionality
 

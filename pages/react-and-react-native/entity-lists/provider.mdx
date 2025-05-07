@@ -33,7 +33,7 @@ interface EntityListContextProps {
 
   idle?: boolean;
   onReset?: () => void;
-  infuseData?: (referenceId: string) => Promise<Record<string, any> | null>;
+  infuseData?: (foreignId: string) => Promise<Record<string, any> | null>;
 }
 ```
 
