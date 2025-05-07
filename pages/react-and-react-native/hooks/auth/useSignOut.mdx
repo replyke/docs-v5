@@ -1,7 +1,7 @@
 # `useSignOut`
 
 ## Overview
-The `useSignOut` hook allows users to securely log out of their account by invalidating their session on the server. This hook integrates with Replyke’s authentication system and ensures proper session termination.
+The `useSignOut` hook allows users to securely sign out of their account by invalidating their session on the server. This hook integrates with Replyke’s authentication system and ensures proper session termination.
 
 ## Usage Example
 
@@ -14,7 +14,7 @@ function SignOutButton() {
   const handleSignOut = async () => {
     try {
       await signOut({
-        refreshToken: "user-refresh-token", // Replace with the actual refresh token
+        refreshToken: "user-refresh-token", // Replace with the actual refresh token. Only or mobile implementation.
       });
 
       console.log("User signed out successfully");
