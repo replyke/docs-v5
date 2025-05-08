@@ -1,3 +1,3 @@
 export default {
-  useSubmitReport: "useSubmitReport",
+  useCreateReport: "useCreateReport",
 };

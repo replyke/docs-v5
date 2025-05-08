@@ -6,4 +6,5 @@ export default {
   useFetchMentionSuggestions: "useFetchMentionSuggestions",
   useCheckUsernameAvailability: "useCheckUsernameAvailability",
   useUpdateUser: "useUpdateUser",
+  useUserData: "useUserData",
 };
