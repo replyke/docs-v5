@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Tsabary/replyke-v4-docs.git"
+    "url": "git+https://github.com/Replyke/docs-v5.git"
   },
   "author": "Yanay Tsabary",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Tsabary/replyke-v4-docs/issues"
+    "url": "https://github.com/Replyke/docs-v5/issues"
   },
-  "homepage": "https://github.com/Tsabary/replyke-v4-docs#readme",
+  "homepage": "https://github.com/Replyke/docs-v5#readme",
   "dependencies": {
     "next": "^15.0.0",
     "nextra": "^3.0.0",
