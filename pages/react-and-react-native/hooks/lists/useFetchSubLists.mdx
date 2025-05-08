@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `useFetchSubLists` hook is used to retrieve the sublists of a specified parent list within the current project. This is useful for navigating hierarchical list structures and fetching child lists dynamically.
+The `useFetchSubLists` hook is used to retrieve the sub-lists of a specified parent list within the current project. This is useful for navigating hierarchical list structures and fetching child lists dynamically.
 
 
 ## Usage Example
@@ -10,15 +10,15 @@ The `useFetchSubLists` hook is used to retrieve the sublists of a specified pare
 ```tsx
 import { useFetchSubLists } from "@replyke/react-js";
 
-function SubListsDisplay({ currentList }: { currentList: List }) {
+function SubListsDisplay({ listId }: { listId: string }) {
   const fetchSubLists = useFetchSubLists();
 
   const handleFetchSubLists = async () => {
     try {
-      const subLists = await fetchSubLists({ currentList });
-      console.log("Fetched sublists:", subLists);
+      const subLists = await fetchSubLists({ listId });
+      console.log("Fetched sub-lists:", subLists);
     } catch (error) {
-      console.error("Failed to fetch sublists:", error.message);
+      console.error("Failed to fetch sub-lists:", error.message);
     }
   };
 
@@ -34,12 +34,12 @@ The hook returns a function that accepts an object with the following field:
 
 | Parameter      | Type   | Required | Description                           |
 |----------------|--------|----------|---------------------------------------|
-| `currentList`  | `List` | Yes      | The parent list whose sublists are to be fetched. |
+| `listId`  | `string` | Yes      | The ID of the parent list whose sub-lists are to be fetched. |
 
 ### Returns
 
-The function resolves with an array of sublists:
+The function resolves with an array of sub-lists:
 
 | Return Value  | Type     | Description                                |
 |---------------|----------|--------------------------------------------|
-| `List[]`      | `List[]` | An array of sublists associated with the specified parent list. |
+| `List[]`      | `List[]` | An array of sub-lists associated with the specified parent list. |

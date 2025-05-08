@@ -4,20 +4,25 @@
 
 The `useRemoveFromList` hook is used to remove an entity from a specified list within the current project. This allows users to dynamically manage the contents of their lists by removing entities as needed.
 
-
 ## Usage Example
 
 ```tsx
 import { useRemoveFromList } from "@replyke/react-js";
 
-function RemoveFromListButton({ entityId, currentList }: { entityId: string; currentList: List }) {
+function RemoveFromListButton({
+  entityId,
+  listId,
+}: {
+  entityId: string;
+  listId: string;
+}) {
   const removeFromList = useRemoveFromList();
 
   const handleRemoveFromList = async () => {
     try {
       const updatedList = await removeFromList({
         entityId,
-        currentList,
+        listId,
       });
 
       console.log("Entity removed from list successfully:", updatedList);
@@ -36,15 +41,15 @@ function RemoveFromListButton({ entityId, currentList }: { entityId: string; cur
 
 The hook returns a function that accepts an object with the following fields:
 
-| Parameter      | Type     | Required | Description                                      |
-|----------------|----------|----------|--------------------------------------------------|
-| `entityId`     | `string` | Yes      | The ID of the entity to be removed from the list. |
-| `currentList`  | `List`   | Yes      | The list from which the entity will be removed.  |
+| Parameter     | Type     | Required | Description                                       |
+| ------------- | -------- | -------- | ------------------------------------------------- |
+| `entityId`    | `string` | Yes      | The ID of the entity to be removed from the list. |
+| `listId` | `string`   | Yes      | The ID of the list from which the entity will be removed.   |
 
 ### Returns
 
 The function resolves with an object representing the updated list:
 
-| Return Value | Type   | Description                                   |
-|--------------|--------|-----------------------------------------------|
-| `List`       | `List` | The details of the updated list without the removed entity. |
+| Return Value | Type   | Description                                                 |
+| ------------ | ------ | ----------------------------------------------------------- |
+| `List`       | `List` | The updated list object after the removed entity. |

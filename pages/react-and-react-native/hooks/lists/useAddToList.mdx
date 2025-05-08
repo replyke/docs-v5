@@ -4,20 +4,25 @@
 
 The `useAddToList` hook is used to add an entity to an existing list within the current project. This allows users to organize entities under specific lists for better categorization and management.
 
-
 ## Usage Example
 
 ```tsx
 import { useAddToList } from "@replyke/react-js";
 
-function AddToListButton({ entityId, currentList }: { entityId: string; currentList: List }) {
+function AddToListButton({
+  entityId,
+  listId,
+}: {
+  entityId: string;
+  listId: string;
+}) {
   const addToList = useAddToList();
 
   const handleAddToList = async () => {
     try {
       const updatedList = await addToList({
         entityId,
-        currentList,
+        listId,
       });
 
       console.log("Entity added to list successfully:", updatedList);
@@ -30,22 +35,21 @@ function AddToListButton({ entityId, currentList }: { entityId: string; currentL
 }
 ```
 
-
 ## Parameters & Returns
 
 ### Parameters
 
 The hook returns a function that accepts an object with the following fields:
 
-| Parameter      | Type     | Required | Description                                  |
-|----------------|----------|----------|----------------------------------------------|
-| `entityId`     | `string` | Yes      | The ID of the entity to be added to the list. |
-| `currentList`  | `List`   | Yes      | The list to which the entity will be added.  |
+| Parameter     | Type     | Required | Description                                   |
+| ------------- | -------- | -------- | --------------------------------------------- |
+| `entityId`    | `string` | Yes      | The ID of the entity to be added to the list. |
+| `listId` | `string`   | Yes      | The list ID to which the entity will be added.   |
 
 ### Returns
 
 The function resolves with an object representing the updated list:
 
-| Return Value | Type   | Description                          |
-|--------------|--------|--------------------------------------|
-| `List`       | `List` | The details of the updated list, including the added entity. |
+| Return Value | Type   | Description                                                  |
+| ------------ | ------ | ------------------------------------------------------------ |
+| `List`       | `List` | The updated list object. |
