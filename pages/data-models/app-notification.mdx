@@ -6,7 +6,8 @@ The **App Notification** object represents an in-app notification sent to users 
 
 | **Property**  | **Type**                                   | **Description**                                                   |
 |--------------|-------------------------------------------|-----------------------------------------------------------------|
-| `id`        | `string`                                  | Unique identifier for the notification (UUID).                   |
+| `id`        | `string`                                  | Unique identifier (UUID).                   |
+| `projectId`      | `string`                                | UUID identifier of the project.            |
 | `userId`    | `string`                                  | The recipient's user ID.                                         |
 | `type`      | `AppNotificationType`                     | The type of notification (e.g., comment, mention, upvote, etc.). |
 | `isRead`    | `boolean`                                 | Indicates whether the notification has been read.                |
@@ -102,7 +103,7 @@ The **App Notification** object represents an in-app notification sent to users 
 #### Comment Upvote Notification
 | **Field**           | **Type**                 | **Description**                           |
 |--------------------|------------------------|-------------------------------------------|
-| `entityId`        | `string`                | ID of the entity containing the comment. |
+| `entityId`        | `uuid`                | ID of the entity containing the comment. |
 | `entityShortId`   | `string`                | Shortened ID for sharing. |
 | `entityTitle`     | `string \| null`         | Title of the entity. |
 | `entityContent`   | `string \| null`         | Content of the entity. |

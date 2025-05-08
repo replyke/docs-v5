@@ -1,6 +1,5 @@
 import React from "react";
 import { DocsThemeConfig } from "nextra-theme-docs";
-import Link from "next/link";
 import Image from "next/image";
 
 const currentYear = new Date().getFullYear(); // Get the current year dynamically
@@ -54,12 +53,12 @@ const config: DocsThemeConfig = {
     </>
   ),
   project: {
-    link: "https://github.com/Tsabary/replyke-v4-docs",
+    link: "https://github.com/Replyke/docs-v5",
   },
-  // chat: {
-  //   link: 'https://discord.com',
-  // },
-  docsRepositoryBase: "https://github.com/shuding/nextra-docs-template",
+  chat: {
+    link: 'https://discord.com/invite/REKxnCJzPz',
+  },
+  docsRepositoryBase: "https://github.com/Replyke/docs-v5",
   footer: {
     content: `© Replyke ${currentYear}`, // Add the year dynamically here
   },

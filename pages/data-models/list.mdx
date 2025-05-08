@@ -1,41 +1,50 @@
 ## List Object Documentation
 
-The **List** object represents a structured collection of entities within Replyke, allowing users to organize and manage related items effectively.
+The **List** object represents a structured, optionally nested collection of entities in Replyke. It supports custom names, hierarchical grouping, and user-defined organization of items.
 
 ### Properties
 
-| **Property**     | **Type**                                      | **Description**                                                   |
-| --------------- | --------------------------------------------- | ----------------------------------------------------------------- |
-| `id`            | `string`                                      | Unique identifier for the list.                                  |
-| `projectId`     | `string \| undefined`                         | Identifier linking the list to a specific project.               |
-| `userId`        | `string`                                      | Identifier of the user who owns the list.                        |
-| `parentId`      | `string \| null`                              | Identifier of the parent list if it's a nested list.             |
-| `name`          | `string`                                      | The name of the list.                                            |
-| `entityIds`     | `string[]`                                    | Array of entity IDs contained in the list.                      |
-| `entities`      | `Partial<Entity>[]`                           | Partial entity objects representing additional entity details.   |
-| `createdAt`     | `Date`                                        | Timestamp when the list was created.                            |
-| `updatedAt`     | `Date`                                        | Timestamp of the most recent update.                            |
+| **Property** | **Type**         | **Description**                                                               |
+| ------------ | ---------------- | ----------------------------------------------------------------------------- |
+| `id`         | `string`         | Unique identifier for the list (UUID).                                        |
+| `projectId`  | `string`         | Identifier of the associated project (UUID).                                  |
+| `userId`     | `string`         | Identifier of the user who created or owns the list (UUID).                   |
+| `parentId`   | `string \| null` | Optional parent list ID (UUID) if this is a nested list.                      |
+| `name`       | `string`         | Human-readable name of the list.                                              |
+| `isRoot`     | `boolean`        | Indicates if this is the root list for the user. Only one root list per user. |
+| `entityIds`  | `string[]`       | Array of entity IDs (UUIDs). Each ID must be unique within the list.          |
+| `createdAt`  | `Date`           | Timestamp when the list was created.                                          |
+| `updatedAt`  | `Date`           | Timestamp when the list was last updated.                                     |
+
+---
+
+### Constraints
+
+* A user can have **only one list** where `isRoot = true`. This is enforced at the DB level.
+* The combination of `projectId`, `parentId`, and `name` must be unique.
+* The `entityIds` array must not contain duplicate values.
+
+---
 
 ### Example Usage
 
 #### Basic List
+
 ```json
 {
   "id": "list-123456",
   "projectId": "project-xyz",
   "userId": "user-789",
   "name": "Favorite Articles",
+  "isRoot": true,
   "entityIds": ["entity-111", "entity-222"],
-  "entities": [
-    { "id": "entity-111", "title": "Introduction to TypeScript" },
-    { "id": "entity-222", "title": "Understanding React Hooks" }
-  ],
   "createdAt": "2024-02-14T12:34:56Z",
   "updatedAt": "2024-02-15T14:20:00Z"
 }
 ```
 
 #### Nested List
+
 ```json
 {
   "id": "list-7891011",
@@ -43,15 +52,17 @@ The **List** object represents a structured collection of entities within Replyk
   "userId": "user-222",
   "parentId": "list-123456",
   "name": "Advanced Topics",
+  "isRoot": false,
   "entityIds": ["entity-333"],
-  "entities": [
-    { "id": "entity-333", "title": "Deep Dive into GraphQL" }
-  ],
   "createdAt": "2024-02-14T13:45:00Z",
   "updatedAt": "2024-02-16T09:10:30Z"
 }
 ```
 
-### Integration Flexibility
-The List object is designed to facilitate hierarchical organization, entity grouping, and efficient retrieval. Developers can leverage it to create collections, favorites, or curated lists of related items.
+---
 
+### Integration Notes
+
+* Lists are hierarchical: a list can contain sub-lists via `parentId`.
+* Used for favorites, collections, user-curated content, or tagging functionality.
+* The root list (`isRoot = true`) can act as a user’s primary feed or saved items view.

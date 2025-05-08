@@ -1,33 +1,49 @@
 ## Entity Object Documentation
 
-The **Entity** object represents a core data structure within Replyke, designed to support various use cases, including social media posts, marketplace products, static content, and location-based listings.
+The **Entity** object represents a core item within Replyke. It can model anything from a social media post or product listing to a static page or location-based record. It supports rich metadata, votes, mentions, optional location tagging and more.
 
 ### Properties
 
-| **Property**     | **Type**                                                   | **Description**                                                                                |
-| ---------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `id`             | `string`                                                   | Unique identifier for the entity.                                                              |
-| `referenceId`    | `string`                                                   | Identifier referencing the original item in an external system or static ID.                   |
-| `shortId`        | `string`                                                   | Auto-generated short identifier for sharing links.                                             |
-| `projectId`      | `string`                                                   | Identifier linking the entity to a specific project.                                           |
-| `user`           | `UserLean \| null`                                         | Basic user information of the entity creator, if applicable.                                   |
-| `title`          | `string \| null`                                           | Title of the entity (if applicable).                                                           |
-| `content`        | `string \| null`                                           | Main content of the entity.                                                                    |
-| `mentions`       | `Mention[]`                                                | List of users mentioned in the content. Each Mention object includes a user’s ID and username. |
-| `media`          | `Record<string, any>[]`                                    | Array of media objects attached to the entity.                                                 |
-| `keywords`       | `string[]`                                                 | Tags or keywords associated with the entity.                                                   |
-| `upvotes`        | `string[]`                                                 | List of user IDs who upvoted the entity.                                                       |
-| `downvotes`      | `string[]`                                                 | List of user IDs who downvoted the entity.                                                     |
-| `repliesCount`   | `number`                                                   | Total number of comments and replies.                                                          |
-| `views`          | `number`                                                   | Total number of views.                                                                         |
-| `score`          | `number`                                                   | Hotness score based on user activity.                                                          |
-| `scoreUpdatedAt` | `Date`                                                     | Timestamp of last score update.                                                                |
-| `location`       | `{ type: "Point", coordinates: [number, number] } \| null` | Optional GeoJSON location ([longitude, latitude]).                                             |
-| `metadata`       | `Record<string, any>`                                      | Custom metadata (max size: 10KB).                                                              |
-| `topComment`     | `TopComment \| null`                                       | The top-ranked comment for this entity, if available.                                          |
-| `createdAt`      | `Date`                                                     | Timestamp when the entity was created.                                                         |
-| `updatedAt`      | `Date`                                                     | Timestamp of the most recent update.                                                           |
-| `deletedAt`      | `Date \| null`                                             | Timestamp if the entity was deleted (null if active).                                          |
+| **Property**     | **Type**                                                   | **Description**                                                                          |
+| ---------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `id`             | `string`                                                   | Unique identifier for the entity (UUID).                                                 |
+| `projectId`      | `string`                                                   | Identifier of the project this entity belongs to (UUID).                                 |
+| `foreignId`      | `string \| null`                                           | Optional external or static identifier (e.g., `"about-page"`). May not be a UUID.        |
+| `shortId`        | `string`                                                   | Auto-generated unique short identifier used for sharing or routing.                      |
+| `user`           | `UserLean \| null`                                         | Optional lightweight user object representing the creator.                               |
+| `title`          | `string \| null`                                           | Optional title or heading for the entity.                                                |
+| `content`        | `string \| null`                                           | Optional main content or description.                                                    |
+| `mentions`       | `Mention[]`                                                | Array of users mentioned in the content. Each item includes user ID (UUID) and username. |
+| `attachments`    | `Record<string, any>[]`                                    | Flexible array of media/info objects (e.g., URLs, sizes, formats).                       |
+| `keywords`       | `string[]`                                                 | Tags or keywords associated with the entity.                                             |
+| `upvotes`        | `string[]`                                                 | Array of user IDs (UUIDs) who upvoted the entity.                                        |
+| `downvotes`      | `string[]`                                                 | Array of user IDs (UUIDs) who downvoted the entity.                                      |
+| `repliesCount`   | `number`                                                   | Total number of comments and replies associated with the entity.                         |
+| `views`          | `number`                                                   | Total view count.                                                                        |
+| `score`          | `number`                                                   | Activity-based score ("hotness") used for ranking.                                       |
+| `scoreUpdatedAt` | `Date`                                                     | Timestamp of the last score calculation.                                                 |
+| `location`       | `{ type: "Point", coordinates: [number, number] } \| null` | Optional GeoJSON-style location (\[longitude, latitude]).                                |
+| `metadata`       | `Record<string, any>`                                      | Flexible metadata (up to 10KB) to store additional project-specific info.                |
+| `topComment`     | `TopComment \| null`                                       | Top-rated comment for this entity, if one exists.                                        |
+| `createdAt`      | `Date`                                                     | Timestamp when the entity was created.                                                   |
+| `updatedAt`      | `Date`                                                     | Timestamp of the most recent update.                                                     |
+| `deletedAt`      | `Date \| null`                                             | Timestamp when the entity was deleted, if applicable.                                    |
+
+---
+
+### Supporting Types
+
+#### `TopComment`
+
+| **Property**   | **Type**   | **Description**                         |
+| -------------- | ---------- | --------------------------------------- |
+| `id`           | `string`   | ID of the comment (UUID).               |
+| `user`         | `UserLean` | User who posted the comment.            |
+| `upvotesCount` | `number`   | Number of upvotes the comment received. |
+| `content`      | `string`   | Text content of the comment.            |
+| `createdAt`    | `string`   | Timestamp the comment was created.      |
+
+---
 
 ### Example Use Cases
 
@@ -37,9 +53,7 @@ The **Entity** object represents a core data structure within Replyke, designed 
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
   "content": "Check out this amazing sunset!",
-  "media": [
-    { "url": "https://example.com/media/sunset.jpg", "size": "2MB" }
-  ],
+  "attachments": [{ "url": "https://example.com/media/sunset.jpg", "size": "2MB" }],
   "keywords": ["sunset", "nature"],
   "user": { "id": "550e8400-e29b-41d4-a716-446655440001", "name": "John Doe" }
 }
@@ -52,7 +66,7 @@ The **Entity** object represents a core data structure within Replyke, designed 
   "id": "550e8400-e29b-41d4-a716-446655440002",
   "title": "Wireless Earbuds",
   "content": "Experience high-quality sound with our new earbuds.",
-  "media": [],
+  "attachments": [],
   "keywords": ["electronics", "audio"]
 }
 ```
@@ -62,10 +76,10 @@ The **Entity** object represents a core data structure within Replyke, designed 
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440003",
-  "referenceId": "about-page",
+  "foreignId": "about-page",
   "title": "About Us",
   "content": "Welcome to our platform. Here is what we do.",
-  "media": [],
+  "attachments": [],
   "user": null
 }
 ```
@@ -83,7 +97,14 @@ The **Entity** object represents a core data structure within Replyke, designed 
 }
 ```
 
-### Flexibility for Integration
+---
 
-The Entity object is designed to be flexible, allowing developers to integrate Replyke into existing datasets without modifying their original structure. This ensures compatibility with different use cases and project requirements.
+### Integration Notes
 
+* The `Entity` structure is intentionally flexible for integration into varied content pipelines, including static, dynamic, or externally referenced data.
+* `foreignId` enables mapping to external datasets without requiring UUIDs.
+* `attachments`, `metadata`, and `location` provide extensibility without schema changes.
+
+---
+
+Ready to move on to `Mention` or `UserLean` next?

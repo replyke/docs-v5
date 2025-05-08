@@ -1,25 +1,65 @@
 ## User Object
 
-The **User** object represents a user within Replyke, containing essential properties for identification, authentication, and metadata storage.
+The **User** object is the public-facing user model returned by the Replyke API to client apps. It contains identity, profile, and activity-relevant fields but excludes private or admin-only information.
 
 ### Properties
 
-| **Property**       | **Type**                                       | **Description**                                                   |
-|-------------------|-------------------------------------------|-----------------------------------------------------------------|
-| `id`              | `string`                                   | Unique identifier for the user in Replyke.                       |
-| `referenceId`     | `string \| null`                          | Unique identifier for the user in an external user system.       |
-| `email`           | `string \| null`                          | User's email address.                                            |
-| `name`            | `string \| null`                          | User's display name.                                             |
-| `username`        | `string \| null`                          | User's unique username.                                          |
-| `avatar`          | `string \| null`                          | URL to the user's avatar image.                                  |
-| `bio`             | `string \| null`                          | User's bio (limited to 300 characters).                          |
-| `birthdate`       | `Date \| null`                            | User's birthdate.                                                |
-| `reputation`      | `number`                                   | Managed by Replyke based on user activity.                      |
-| `location`        | `{ type: "Point", coordinates: [number, number] } \| null` | Optional GeoJSON location with longitude and latitude. |
-| `metadata`        | `Record<string, any>`                      | Custom metadata (max size: 10KB).                                |
-| `secureMetadata`  | `Record<string, any>`                      | Secure custom metadata (max size: 10KB), excluded from entities and comments. |
-| `suspension`      | `{ isSuspended: boolean, reason: string \| null, startDate: Date \| null, endDate: Date \| null }` | Suspension status, reason, and duration (null for indefinite). |
-| `createdAt`       | `Date`                                     | User creation date.                                              |
+| **Property** | **Type**                                                   | **Description**                                                |
+| ------------ | ---------------------------------------------------------- | -------------------------------------------------------------- |
+| `id`         | `string`                                                   | Unique identifier for the user (UUID).                         |
+| `projectId`  | `string`                                                   | Identifier of the associated project (UUID).                   |
+| `role`       | `"admin" \| "editor" \| "visitor"`                         | Role assigned to the user in the project.                      |
+| `name`       | `string \| null`                                           | Display name of the user.                                      |
+| `username`   | `string \| null`                                           | Unique username, if set.                                       |
+| `avatar`     | `string \| null`                                           | URL to the user's avatar image.                                |
+| `bio`        | `string \| null`                                           | Optional short bio (max 300 characters).                       |
+| `birthdate`  | `Date \| null`                                             | User's birthdate.                                              |
+| `location`   | `{ type: "Point", coordinates: [number, number] } \| null` | Optional GeoJSON location (\[longitude, latitude]).            |
+| `metadata`   | `Record<string, any>`                                      | Public metadata, available in shared content (max size: 10KB). |
+| `reputation` | `number`                                                   | Activity-based score managed by Replyke.                       |
+| `createdAt`  | `Date`                                                     | Timestamp when the user was created.                           |
 
-This table provides a structured view of the User object, ensuring consistency across different client integrations. The `metadata` fields allow for extensibility, while `location` and `suspension` provide additional contextual data when applicable.
+---
 
+## UserFull Object
+
+The **UserFull** object is an internal model used within Replyke’s administrative interfaces. It contains the full user record, including sensitive, private, or backoffice-only fields.
+
+### Properties
+
+| **Property**     | **Type**                                                                                           | **Description**                                                       |
+| ---------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `id`             | `string`                                                                                           | Unique identifier for the user (UUID).                                |
+| `projectId`      | `string`                                                                                           | Identifier of the associated project (UUID).                          |
+| `foreignId`      | `string \| null`                                                                                   | Optional external or static ID for mapping users from another system. |
+| `role`           | `"admin" \| "editor" \| "visitor"`                                                                 | Role assigned to the user in the project.                             |
+| `email`          | `string \| null`                                                                                   | User’s email address.                                                 |
+| `name`           | `string \| null`                                                                                   | Display name.                                                         |
+| `username`       | `string \| null`                                                                                   | Unique username.                                                      |
+| `avatar`         | `string \| null`                                                                                   | Avatar image URL.                                                     |
+| `bio`            | `string \| null`                                                                                   | Bio (up to 300 characters).                                           |
+| `birthdate`      | `Date \| null`                                                                                     | Date of birth.                                                        |
+| `location`       | `{ type: "Point", coordinates: [number, number] } \| null`                                         | Optional user location in GeoJSON format.                             |
+| `metadata`       | `Record<string, any>`                                                                              | Public, sharable metadata (max 10KB).                                 |
+| `secureMetadata` | `Record<string, any>`                                                                              | Private metadata, excluded from shared views.                         |
+| `reputation`     | `number`                                                                                           | System-managed score based on participation.                          |
+| `isVerified`     | `boolean`                                                                                          | Whether the user is verified.                                         |
+| `isActive`       | `boolean`                                                                                          | Whether the account is currently active.                              |
+| `lastActive`     | `Date`                                                                                             | Timestamp of most recent user activity.                               |
+| `suspension`     | `{ isSuspended: boolean, reason: string \| null, startDate: Date \| null, endDate: Date \| null }` | Suspension status and duration.                                       |
+| `createdAt`      | `Date`                                                                                             | Creation timestamp.                                                   |
+| `updatedAt`      | `Date`                                                                                             | Last updated timestamp.                                               |
+| `deletedAt`      | `Date \| null`                                                                                     | Deletion timestamp, if applicable.                                    |
+
+---
+
+### Summary of Differences
+
+| **Field**                | **Included in `User`?** | **Included in `UserFull`?** | **Notes**                                         |
+| ------------------------ | ----------------------- | --------------------------- | ------------------------------------------------- |
+| `email`                  | ❌                       | ✅                           | Sensitive — excluded from API-facing version.     |
+| `secureMetadata`         | ❌                       | ✅                           | Internal use only.                                |
+| `isVerified`             | ❌                       | ✅                           | Platform-level detail.                            |
+| `isActive`               | ❌                       | ✅                           | Internal moderation use.                          |
+| `lastActive`             | ❌                       | ✅                           | Activity tracking — internal analytics.           |
+| `updatedAt`, `deletedAt` | ❌                       | ✅                           | Full auditing data only shown in admin dashboard. |
