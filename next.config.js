@@ -1,15 +1,15 @@
-import nextra from "nextra";
+// next.config.js
+import withNextra from "nextra";
 
-const withNextra = nextra({
+export default withNextra({
   theme: "nextra-theme-docs",
   themeConfig: "./theme.config.tsx",
-});
 
-export default {
-  ...withNextra(),
-  output: 'export',
-  distDir: "out",
+  // ← tell Next.js to produce a fully static site during `next build`
+  output: "export",
+
+  // keep images unoptimized so you don’t need the Vercel loader
   images: {
     unoptimized: true,
   },
-};
+});

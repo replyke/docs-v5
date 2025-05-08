@@ -5,9 +5,10 @@
   "description": "Documentation for Replyke v4",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "export": "npx next build && npx next export"
+    "build": "next build"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "repository": {
     "type": "git",
