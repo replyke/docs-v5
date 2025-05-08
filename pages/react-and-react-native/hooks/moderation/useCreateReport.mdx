@@ -1,37 +1,37 @@
-# `useSubmitReport`
+# `useCreateReport`
 
 ## Overview
 
-The `useSubmitReport` hook allows users to report inappropriate or problematic content. It provides specialized functions to submit reports for comments or entities, with options to specify reasons and additional details.
+The `useCreateReport` hook allows users to report inappropriate or problematic content. It provides specialized functions to submit reports for comments or entities, with options to specify reasons and additional details.
 
 
 ## Usage Example
 
 ```tsx
-import { useSubmitReport } from "@replyke/react-js";
+import { useCreateReport } from "@replyke/react-js";
 
 function ReportButton({ targetId, targetType }: { targetId: string; targetType: "Comment" | "Entity" }) {
-  const { submitCommentReport, submitEntityReport } = useSubmitReport();
+  const { createCommentReport, createEntityReport } = useCreateReport();
 
   const handleReport = async () => {
     try {
       if (targetType === "Comment") {
-        await submitCommentReport({
+        await createCommentReport({
           targetId,
           reason: "spam",
           details: "This comment contains spam links."
         });
       } else {
-        await submitEntityReport({
+        await createEntityReport({
           targetId,
           reason: "harassment",
           details: "This entity contains inappropriate content."
         });
       }
 
-      console.log("Report submitted successfully.");
+      console.log("Report created successfully.");
     } catch (error) {
-      console.error("Failed to submit report:", error.message);
+      console.error("Failed to create report:", error.message);
     }
   };
 
@@ -45,7 +45,7 @@ function ReportButton({ targetId, targetType }: { targetId: string; targetType: 
 
 The hook provides two functions with the following parameters:
 
-#### `submitCommentReport`
+#### `createCommentReport`
 
 | Parameter    | Type            | Required | Description                                   |
 |--------------|-----------------|----------|-----------------------------------------------|
@@ -53,7 +53,7 @@ The hook provides two functions with the following parameters:
 | `reason`     | `ReportReasonKey` | Yes    | The reason for reporting the comment.         |
 | `details`    | `string`        | No       | Additional details about the report.          |
 
-#### `submitEntityReport`
+#### `createEntityReport`
 
 | Parameter    | Type            | Required | Description                                   |
 |--------------|-----------------|----------|-----------------------------------------------|
