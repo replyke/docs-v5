@@ -1,8 +1,8 @@
-# Fetch Sub-Lists
+# Get Sub-Lists
 
 ## Endpoint
 
-**URL:** `/:projectId/lists/sub-lists`
+**URL:** `/:projectId/lists/:listId/sub-lists`
 
 **Method:** `GET`
 
@@ -12,24 +12,34 @@
 
 ## Description
 
-This endpoint retrieves the sub-lists for a given parent list within a specific project. The authenticated user must have access to the requested lists.
+Fetches all sub-lists nested under the specified parent list for the authenticated user.
 
 ---
 
 ## Request
 
-### Query Parameters
-
-| Parameter   | Type     | Required | Description                                      |
-| ----------- | -------- | -------- | ------------------------------------------------ |
-| `projectId` | `string` | Yes      | The project ID associated with the request.     |
-| `parentId`  | `string` | Yes      | The ID of the parent list whose sub-lists are to be retrieved. |
-
 ### Headers
 
-| Header          | Type     | Required | Description                                       |
-| --------------  | -------- | -------- | ------------------------------------------------- |
-| `Authorization` | `string` | Yes      | Bearer token for authentication.                 |
+| Header          | Type     | Required | Description                      |
+| --------------- | -------- | -------- | -------------------------------- |
+| `Authorization` | `string` | Yes      | Bearer token for authentication. |
+
+### Path Parameters
+
+| Parameter | Type     | Required | Description                |
+| --------- | -------- | -------- | -------------------------- |
+| `listId`  | `string` | Yes      | The ID of the parent list. |
+
+### Query Parameters
+
+_None_
+
+#### Example Request
+
+```http
+GET /proj1234/lists/list_abc/sub-lists
+Authorization: Bearer <ACCESS_TOKEN>
+```
 
 ---
 
@@ -40,36 +50,38 @@ This endpoint retrieves the sub-lists for a given parent list within a specific 
 ```json
 [
   {
-    "id": "sublist1",
+    "id": "list_def",
+    "projectId": "proj1234",
+    "userId": "user_xyz",
     "name": "Sub List 1",
-    "userId": "67890",
-    "parentId": "rootList",
-    "entityIds": ["entity1"],
-    "entities": [
-      {
-        "id": "entity1",
-        "title": "Sample Entity 1",
-        "content": "This is the content of entity 1."
-      }
-    ]
+    "parentId": "list_abc",
+    "entityIds": [],
+    "subLists": [],
+    "createdAt": "2024-01-02T00:00:00.000Z",
+    "updatedAt": "2024-01-02T00:00:00.000Z"
   },
   {
-    "id": "sublist2",
+    "id": "list_ghi",
+    "projectId": "proj1234",
+    "userId": "user_xyz",
     "name": "Sub List 2",
-    "userId": "67890",
-    "parentId": "rootList",
-    "entityIds": []
+    "parentId": "list_abc",
+    "entityIds": [],
+    "subLists": [],
+    "createdAt": "2024-01-02T00:00:00.000Z",
+    "updatedAt": "2024-01-02T00:00:00.000Z"
   }
 ]
 ```
 
 ### Error Responses
 
-#### Missing Required Parameters (400 Bad Request)
+#### Missing Parameters (400 Bad Request)
 
 ```json
 {
-  "error": "Missing required parameters in request query"
+  "error": "Missing required parameters in request query",
+  "code": "list/missing-params"
 }
 ```
 
@@ -77,7 +89,9 @@ This endpoint retrieves the sub-lists for a given parent list within a specific 
 
 ```json
 {
-  "error": "Server error"
+  "error": "Server error",
+  "code": "list/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -85,8 +99,5 @@ This endpoint retrieves the sub-lists for a given parent list within a specific 
 
 ## Notes
 
-- This endpoint retrieves all sub-lists belonging to the specified parent list.
-- The response includes sub-lists along with their populated entities.
-- If no sub-lists exist, an empty array is returned.
-- Authentication is required to access sub-lists.
-
+- Only sub-lists belonging to the authenticated user and nested under the specified list are returned.
+- The returned sub-lists are populated with their own metadata (e.g., entity IDs, timestamps).

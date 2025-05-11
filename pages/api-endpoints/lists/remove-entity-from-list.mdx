@@ -2,7 +2,7 @@
 
 ## Endpoint
 
-**URL:** `/:projectId/lists/remove-entity`
+**URL:** `/:projectId/lists/:listId/remove-entity`
 
 **Method:** `PATCH`
 
@@ -12,17 +12,11 @@
 
 ## Description
 
-This endpoint allows users to remove an entity from a specific list. The list must belong to the authenticated user. Authentication is required.
+Removes an entity from the specified list for the authenticated user.
 
 ---
 
 ## Request
-
-### Path Parameters
-
-| Parameter   | Type     | Required | Description                                 |
-| ----------- | -------- | -------- | ------------------------------------------- |
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
 
 ### Headers
 
@@ -30,23 +24,23 @@ This endpoint allows users to remove an entity from a specific list. The list mu
 | --------------- | -------- | -------- | -------------------------------- |
 | `Authorization` | `string` | Yes      | Bearer token for authentication. |
 
+### Path Parameters
+
+| Parameter | Type     | Required | Description            |
+| --------- | -------- | -------- | ---------------------- |
+| `listId`  | `string` | Yes      | ID of the target list. |
+
 ### Body Parameters
 
-| Parameter  | Type     | Required | Description                         |
-| ---------- | -------- | -------- | ----------------------------------- |
-| `listId`   | `string` | Yes      | The ID of the list to be updated.   |
-| `entityId` | `string` | Yes      | The ID of the entity to be removed. |
+| Field      | Type     | Required | Description                               |
+| ---------- | -------- | -------- | ----------------------------------------- |
+| `entityId` | `string` | Yes      | ID of the entity to remove from the list. |
 
 #### Example Request
 
-```sh
-PATCH /proj1234/lists/remove-entity
-Content-Type: application/json
-Authorization: Bearer <ACCESS_TOKEN>
-
+```json
 {
-  "listId": "67890",
-  "entityId": "entity123"
+  "entityId": "abc123"
 }
 ```
 
@@ -58,36 +52,24 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "id": "67890",
-  "projectId": "12345",
-  "userId": "56789",
-  "parentId": "123",
-  "name": "My List",
-  "entityIds": ["entity456", "entity789"],
-  "entities": [
-    {
-      "id": "entity456",
-      "title": "Sample Entity 456",
-      "content": "This is the content of entity 456."
-    },
-    {
-      "id": "entity789",
-      "title": "Sample Entity 789",
-      "content": "This is the content of entity 789."
-    }
-  ],
-  "createdAt": "2024-02-12T10:00:00Z",
-  "updatedAt": "2024-02-12T10:05:00Z"
+  "id": "list_abc",
+  "projectId": "proj1234",
+  "userId": "user_xyz",
+  "name": "Favorites",
+  "entityIds": ["xyz789"],
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-02T00:00:00.000Z"
 }
 ```
 
 ### Error Responses
 
-#### Missing or Invalid Data (400 Bad Request)
+#### Missing Parameters (400 Bad Request)
 
 ```json
 {
-  "error": "Missing projectId, entityId or listId in request body"
+  "error": "Missing listId or entityId",
+  "code": "list/missing-data"
 }
 ```
 
@@ -95,7 +77,17 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "error": "List not found"
+  "error": "List not found",
+  "code": "list/not-found"
+}
+```
+
+#### Entity Not Found in List (409 Conflict)
+
+```json
+{
+  "error": "Entity does not exist in the list",
+  "code": "list/entity-not-found"
 }
 ```
 
@@ -103,7 +95,9 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error.",
+  "code": "list/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -111,6 +105,5 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ## Notes
 
-- The list must belong to the authenticated user.
-- The entity will be removed from the list's `entityIds` array.
-- The response includes the updated list details after removing the entity.
+- This operation has no effect if the entity is not already in the list.
+- The response includes the updated list with the entity removed.

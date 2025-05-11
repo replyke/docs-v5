@@ -2,33 +2,33 @@
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/entities/:entityId/downvote`
+**URL:** `/entities/:entityId/downvote`
 
 **Method:** `PATCH`
 
-**Authentication Required:** Yes (Bearer Token)
+**Authentication Required:** Yes
 
-----------
+---
 
 ## Description
 
-This endpoint allows a user to downvote an entity. If a user has previously upvoted the entity, the upvote will be removed. A user cannot downvote an entity more than once.
+Downvotes an entity on behalf of the authenticated user. If the user has previously upvoted the entity, the upvote is removed.
 
-----------
+---
 
 ## Request
 
+### Path Parameters
+
+| Parameter  | Type     | Required | Description           |
+| ---------- | -------- | -------- | --------------------- |
+| `entityId` | `string` | Yes      | The ID of the entity. |
+
 ### Headers
 
--   `Authorization: Bearer <accessToken>` (Required)
-
-### URL Parameters
-
-
-| Parameter    | Type     | Required | Description |
-|-------------|----------|----------|-------------|
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
-| `entityId`  | `string` | Yes      | The ID of the entity to downvote. |
+| Header          | Type     | Required | Description            |
+| --------------- | -------- | -------- | ---------------------- |
+| `Authorization` | `string` | Yes      | Bearer token for auth. |
 
 ### Body Parameters
 
@@ -36,12 +36,12 @@ _None_
 
 #### Example Request
 
-```sh
-PATCH /proj1234/entities/67890/downvote
-Authorization: Bearer <accessToken>
+```http
+PATCH /entities/abc123/downvote
+Authorization: Bearer <ACCESS_TOKEN>
 ```
 
-----------
+---
 
 ## Response
 
@@ -49,23 +49,12 @@ Authorization: Bearer <accessToken>
 
 ```json
 {
-  "id": "<ENTITY_ID>",
-  "projectId": "<PROJECT_ID>",
-  "referenceId": "<REFERENCE_ID>",
-  "userId": "<USER_ID>",
-  "title": "Entity Title",
-  "content": "Entity content goes here.",
-  "keywords": ["example", "update"],
-  "mentions": [{ "id": "user-1111", "username": "john_doe" }],
+  "id": "abc123",
+  "userId": "user_001",
+  "title": "Great Idea",
   "upvotes": [],
-  "downvotes": ["<USER_ID>", "other_user_id"],
-  "sharesCount": 0,
-  "views": 0,
-  "score": -1,
-  "metadata": {},
-  "createdAt": "<TIMESTAMP>",
-  "updatedAt": "<TIMESTAMP>",
-  "deletedAt": null
+  "downvotes": ["user_001", "user_002"],
+  ...
 }
 ```
 
@@ -75,7 +64,8 @@ Authorization: Bearer <accessToken>
 
 ```json
 {
-  "error": "Missing entityId in request body"
+  "error": "Missing entityId in request.",
+  "code": "entity/invalid-id"
 }
 ```
 
@@ -83,15 +73,17 @@ Authorization: Bearer <accessToken>
 
 ```json
 {
-  "error": "Entity not found"
+  "error": "Entity not found.",
+  "code": "entity/not-found"
 }
 ```
 
-#### User Already Downvoted (409 Conflict)
+#### Already Downvoted (409 Conflict)
 
 ```json
 {
-  "error": "User already downvoted entity"
+  "error": "User already downvoted entity.",
+  "code": "entity/already-downvoted"
 }
 ```
 
@@ -99,14 +91,15 @@ Authorization: Bearer <accessToken>
 
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error.",
+  "code": "entity/server-error",
+  "details": "<Error message>"
 }
 ```
 
-----------
+---
 
 ## Notes
 
--   If a user has previously upvoted an entity, the upvote is removed when they downvote.
--   `upvotes` and `downvotes` are arrays of user IDs representing users who have voted on the entity.
--   Users cannot downvote the same entity multiple times.
+- This action is only available to authenticated users.
+- Reputation points are updated for the entity owner.

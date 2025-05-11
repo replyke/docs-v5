@@ -1,97 +1,76 @@
-
 # Remove Downvote from Entity
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/entities/:entityId/remove-downvote`
+**URL:** `/entities/:entityId/remove-downvote`
 
 **Method:** `PATCH`
 
-**Authentication Required:** Yes (Bearer Token)
+**Authentication Required:** Yes
 
-----------
+---
 
 ## Description
 
-This endpoint allows a user to remove their downvote from an entity. If the user has not previously downvoted the entity, the request will return an error.
+Removes a downvote from the authenticated user on the specified entity.
 
-----------
+---
 
 ## Request
 
+### Path Parameters
+
+| Parameter  | Type     | Required | Description                 |
+| ---------- | -------- | -------- | --------------------------- |
+| `entityId` | `string` | Yes      | ID of the entity to modify. |
+
 ### Headers
 
--   `Authorization: Bearer <accessToken>` (Required)
+| Header          | Type     | Required | Description                             |
+| --------------- | -------- | -------- | --------------------------------------- |
+| `Authorization` | `string` | Yes      | Bearer token of the authenticated user. |
 
-### URL Parameters
+### Example Request
 
-| Parameter    | Type     | Required | Description |
-|-------------|----------|----------|-------------|
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
-| `entityId`  | `string` | Yes      | The ID of the entity from which to remove the downvote. |
-
-### Body Parameters
-
-_None_
-
-#### Example Request
-
-```sh
-PATCH /proj1234/entities/67890/remove-downvote
-Authorization: Bearer <accessToken>
+```http
+PATCH /entities/abc123/remove-downvote
+Authorization: Bearer <ACCESS_TOKEN>
 ```
 
-----------
+---
 
 ## Response
 
 ### Success Response (200 OK)
 
+Returns the updated entity with the user’s downvote removed.
+
 ```json
 {
-  "id": "<ENTITY_ID>",
-  "projectId": "<PROJECT_ID>",
-  "referenceId": "<REFERENCE_ID>",
-  "userId": "<USER_ID>",
-  "title": "Entity Title",
-  "content": "Entity content goes here.",
-  "keywords": ["example", "update"],
-  "mentions": [{ "id": "user-1111", "username": "john_doe" }],
-  "upvotes": [],
-  "downvotes": ["other_user_id"],
-  "sharesCount": 0,
-  "views": 0,
-  "score": 0,
-  "metadata": {},
-  "createdAt": "<TIMESTAMP>",
-  "updatedAt": "<TIMESTAMP>",
-  "deletedAt": null
+  "id": "abc123",
+  "userId": "user_456",
+  "downvotes": [],
+  ...
 }
 ```
 
 ### Error Responses
 
-#### Missing Entity ID (400 Bad Request)
+#### Not Downvoted (409 Conflict)
 
 ```json
 {
-  "error": "Invalid entity ID"
+  "error": "Can't remove downvote, as user didn't downvote entity or entity not found.",
+  "code": "entity/not-downvoted"
 }
 ```
 
-#### Entity Not Found (404 Not Found)
+#### Not Found (404 Not Found)
 
 ```json
 {
-  "error": "Entity not found"
-}
-```
-
-#### User Has Not Downvoted (409 Conflict)
-
-```json
-{
-  "error": "Can't remove downvote, as user didn't downvote entity or entity not found"
+  "error": "Entity not found.",
+  "code": "entity/not-found"
 }
 ```
 
@@ -99,14 +78,14 @@ Authorization: Bearer <accessToken>
 
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error.",
+  "code": "entity/server-error"
 }
 ```
 
-----------
+---
 
 ## Notes
 
--   If the user has not previously downvoted the entity, an error will be returned.
--   `upvotes` and `downvotes` are arrays of user IDs representing users who have voted on the entity.
--   Removing a downvote does not automatically add an upvote; it simply removes the user's downvote.
+- Removing a downvote increases the entity author’s reputation.
+- The request will fail if the entity was never downvoted by the user.

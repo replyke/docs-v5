@@ -1,63 +1,36 @@
-
-# Fetch Single Entity
+# Get Single Entity
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/entities/single`
+**URL:** `/:projectId/entities/:entityId`
 
 **Method:** `GET`
 
 **Authentication Required:** No
 
-----------
+---
 
 ## Description
 
-This endpoint fetches a single entity based on one of the following identifiers: `referenceId`, `entityId`, or `shortId`. If the entity does not exist and the `createIfNotFound` parameter is set to `true`, a new entity with the specified `referenceId` will be created.
+Fetches a single entity by its ID. Publicly accessible.
 
-----------
+---
 
 ## Request
 
-### Headers
+### Path Parameters
 
--   `Authorization: Bearer <accessToken>` (Optional)
+| Parameter   | Type     | Required | Description                   |
+| ----------- | -------- | -------- | ----------------------------- |
+| `entityId`  | `string` | Yes      | ID of the entity to retrieve. |
 
-### URL Parameters
+### Example Request
 
-
-| Parameter    | Type     | Required | Description |
-|-------------|----------|----------|-------------|
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
-
-### Query Parameters
-| Parameter         | Type      | Required | Description |
-|------------------|-----------|----------|-------------|
-| `referenceId`    | `string`  | Conditional | Fetches the entity with this reference ID. Required if `entityId` and `shortId` are not provided. |
-| `entityId`       | `string`  | Conditional | Fetches the entity by its internal ID. Required if `referenceId` and `shortId` are not provided. |
-| `shortId`        | `string`  | Conditional | Fetches the entity using its short identifier. Required if `referenceId` and `entityId` are not provided. |
-| `createIfNotFound` | `boolean` | No       | If `true` and an entity with the provided `referenceId` does not exist, a new one will be created. Only applicable when using `referenceId`. Default: `false`. |
-
-#### Example Request URLs
-
-Fetch by reference ID:
-
-```
-GET https://api.replyke.com/:projectId/entities/single?referenceId=home-page
+```http
+GET /proj1234/entities/entity_abc
 ```
 
-Fetch by entity ID:
-```
-GET https://api.replyke.com/:projectId/entities/single?entityId=12345
-```
-
-Fetch by short ID:
-
-```
-GET https://api.replyke.com/:projectId/entities/single?shortId=abc123
-```
-
-----------
+---
 
 ## Response
 
@@ -65,38 +38,33 @@ GET https://api.replyke.com/:projectId/entities/single?shortId=abc123
 
 ```json
 {
-  "id": "<ENTITY_ID>",
-  "projectId": "<PROJECT_ID>",
-  "referenceId": "<REFERENCE_ID>",
-  "userId": "<USER_ID>",
-  "title": "Entity Title",
-  "content": "Entity content...",
-  "keywords": ["example", "topic"],
-  "mentions": [{ "id": "user-1111", "username": "john_doe" }],
-  "location": { "type": "Point", "coordinates": [120.982, 14.604] },
-  "upvotes": [],
-  "downvotes": [],
-  "sharesCount": 0,
-  "views": 0,
-  "score": 0,
-  "metadata": { "category": "news" },
-  "createdAt": "<TIMESTAMP>",
-  "updatedAt": "<TIMESTAMP>",
-  "deletedAt": null
+  "id": "entity_abc",
+  "userId": "user_123",
+  "title": "Interesting Thought",
+  "content": "Here's something I've been thinking about...",
+  "keywords": ["thinking"],
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  ...
 }
 ```
 
-### No Content Response (204 No Content)
-
-Occurs when no entity is found and `createIfNotFound` is `false`.
-
 ### Error Responses
 
-#### Invalid Query Parameter (400 Bad Request)
+#### Invalid Entity ID (400 Bad Request)
 
 ```json
 {
-  "error": "Missing projectId or a valid referenceId/entityId/shortId in request query"
+  "error": "Missing a valid entityId in request query.",
+  "code": "entity/invalid-resource-id"
+}
+```
+
+#### Not Found (404 Not Found)
+
+```json
+{
+  "error": "Entity not found",
+  "code": "entity/not-found"
 }
 ```
 
@@ -104,15 +72,16 @@ Occurs when no entity is found and `createIfNotFound` is `false`.
 
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error.",
+  "code": "entity/server-error",
+  "details": "<Error message>"
 }
 ```
 
-----------
+---
 
 ## Notes
 
--   At least one of `referenceId`, `entityId`, or `shortId` must be provided.
--   `referenceId` is useful when integrating Replyke on top of an existing dataset, allowing developers to link entities with external data.
--   If `createIfNotFound=true` is used with a `referenceId` and no matching entity is found, a new entity will be created.
--   The `shortId` is automatically generated when an entity is created and can be used for shorter URLs.
+* No authentication is required.
+* Entity score may be updated asynchronously after response is sent.
+* Returned entity includes metadata, vote counts, and replies count if available.

@@ -1,97 +1,98 @@
+Here’s your updated **"Update Entity"** documentation reformatted to match the style of the **"Create Entity"** example:
+
+---
 
 # Update Entity
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/entities/:entityId`
+**URL:** `/:projectId/entities/:entityId`
 
 **Method:** `PATCH`
 
-**Authentication Required:** Optional (If updating a user-owned entity, authentication is required)
+**Authentication Required:** Yes
 
-----------
+---
 
 ## Description
 
-This endpoint updates an existing entity. Only fields that are explicitly provided in the request body will be updated. If the entity belongs to a user, authentication is required to ensure the request is authorized.
+Updates an existing entity. Only the entity’s creator or a master-level user can perform this action.
 
-----------
+---
 
 ## Request
 
+### Path Parameters
+
+| Parameter  | Type     | Required | Description                     |
+| ---------- | -------- | -------- | ------------------------------- |
+| `entityId` | `string` | Yes      | The ID of the entity to update. |
+
 ### Headers
 
--   `Authorization: Bearer <accessToken>` (Required if updating a user-owned entity)
-
-### URL Parameters
-
-
-| Parameter    | Type     | Required | Description |
-|-------------|----------|----------|-------------|
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
-| `entityId`  | `string` | Yes      | The ID of the entity to update. |
+| Header          | Type     | Required | Description                           |
+| --------------- | -------- | -------- | ------------------------------------- |
+| `Authorization` | `string` | Yes      | Bearer token for authenticated users. |
 
 ### Body Parameters
-| Parameter   | Type      | Required | Description |
-|------------|-----------|----------|-------------|
-| `title`     | `string`  | No       | The updated title of the entity. |
-| `content`   | `string`  | No       | The updated content of the entity. |
-| `media`     | `object[]` | No       | An array of media objects. Media format is free-form. |
-| `keywords`  | `string[]` | No       | An array of keywords associated with the entity. |
-| `metadata`  | `object`  | No       | JSON object containing additional metadata. |
-| `mentions`  | `array`   | No       | An array of mentions, each containing an `id` and `username`. |
-| `location`  | `object`  | No       | An object representing the location of the entity, formatted as: `{"type": "Point", "coordinates": [longitude, latitude]}`
 
+| Field         | Type     | Required | Description                                                 |
+| ------------- | -------- | -------- | ----------------------------------------------------------- |
+| `title`       | `string` | No       | Updated title of the entity.                                |
+| `content`     | `string` | No       | Updated content.                                            |
+| `attachments` | `array`  | No       | Updated attachments.                                        |
+| `keywords`    | `array`  | No       | Updated list of keywords.                                   |
+| `location`    | `object` | No       | Updated location `{ longitude: number, latitude: number }`. |
+| `metadata`    | `object` | No       | Updated metadata.                                           |
+| `mentions`    | `array`  | No       | Updated mentions list with objects like `{ id: string }`.   |
 
 #### Example Request
 
 ```json
+PATCH /entities/abc123
+
 {
   "title": "Updated Entity Title",
-  "content": "Updated content for the entity.",
-  "keywords": ["example", "update"],
-  "metadata": { "category": "news" },
-  "mentions": [{ "id": "user-1111", "username": "john_doe" }],
-  "location": { "type": "Point", "coordinates": [120.982, 14.604] }
+  "keywords": ["update", "example"],
+  "metadata": { "color": "blue" },
+  "location": {
+    "longitude": -73.935242,
+    "latitude": 40.73061
+  }
 }
 ```
 
-----------
+---
 
 ## Response
 
 ### Success Response (200 OK)
 
+Returns the updated entity object:
+
 ```json
 {
-  "id": "<ENTITY_ID>",
-  "projectId": "<PROJECT_ID>",
-  "referenceId": "<REFERENCE_ID>",
-  "userId": "<USER_ID>",
+  "id": "abc123",
   "title": "Updated Entity Title",
-  "content": "Updated content for the entity.",
-  "keywords": ["example", "update"],
-  "mentions": [{ "id": "user-1111", "username": "john_doe" }],
-  "location": { "type": "Point", "coordinates": [120.982, 14.604] },
-  "upvotes": [],
-  "downvotes": [],
-  "sharesCount": 0,
-  "views": 0,
-  "score": 0,
-  "metadata": { "category": "news" },
-  "createdAt": "<TIMESTAMP>",
-  "updatedAt": "<TIMESTAMP>",
-  "deletedAt": null
+  "content": "...",
+  "keywords": ["update", "example"],
+  "metadata": { "color": "blue" },
+  "location": {
+    "type": "Point",
+    "coordinates": [-73.935242, 40.73061]
+  },
+  ...
 }
 ```
 
 ### Error Responses
 
-#### Invalid Entity ID (400 Bad Request)
+#### Missing Entity ID (400 Bad Request)
 
 ```json
 {
-  "error": "Invalid entityID"
+  "error": "Missing entityId in request.",
+  "code": "entity/invalid-id"
 }
 ```
 
@@ -99,7 +100,8 @@ This endpoint updates an existing entity. Only fields that are explicitly provid
 
 ```json
 {
-  "error": "You do not have permission to update this entity."
+  "error": "User is not authorized to update this entity.",
+  "code": "entity/unauthorized"
 }
 ```
 
@@ -107,7 +109,8 @@ This endpoint updates an existing entity. Only fields that are explicitly provid
 
 ```json
 {
-  "error": "Entity not found"
+  "error": "Entity not found.",
+  "code": "entity/not-found"
 }
 ```
 
@@ -115,16 +118,16 @@ This endpoint updates an existing entity. Only fields that are explicitly provid
 
 ```json
 {
-  "error": "Failed to update the entity"
+  "error": "Internal server error.",
+  "code": "entity/server-error",
+  "details": "<Error message>"
 }
 ```
 
-----------
+---
 
 ## Notes
 
--   If the entity is user-owned, only the user who created it can update it.
--   Only provided fields will be updated; unspecified fields remain unchanged.
--   `media` is a free-form array and its structure depends on the project implementation.
--   `mentions` should be passed as an array of objects containing `id` and `username` fields.
--   `location` should be passed in GeoJSON format (`type: "Point"`).
+* Fields not included in the request body will remain unchanged.
+* The `location` field, if updated, must include both `longitude` and `latitude`.
+* A webhook `validateEntityUpdated` is triggered before the update is applied.

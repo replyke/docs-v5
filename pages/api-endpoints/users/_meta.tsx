@@ -4,7 +4,7 @@ export default {
   "fetch-followers-count": "Fetch Followers Count",
   "fetch-following-count": "Fetch Following Count",
   "check-username-availability": "Check Username Availability",
-  "fetch-mention-suggestions": "Get Mention Suggestions",
+  "fetch-user-suggestions": "Get User Suggestions",
   "update-user": "Update User",
   follows: "follows",
 };

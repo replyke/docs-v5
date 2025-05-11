@@ -1,8 +1,8 @@
-# Create Follow Relationship
+# Follow User
 
 ## Endpoint
 
-**URL:** `/:projectId/follows/`
+**URL:** `/:projectId/users/:userId/follow`
 
 **Method:** `POST`
 
@@ -12,7 +12,7 @@
 
 ## Description
 
-This endpoint allows an authenticated user to follow another user within a specified project. If the follow relationship already exists, an error is returned. A user cannot follow themselves.
+Create a follow relationship between the authenticated user and another user.
 
 ---
 
@@ -20,9 +20,9 @@ This endpoint allows an authenticated user to follow another user within a speci
 
 ### Path Parameters
 
-| Parameter   | Type     | Required | Description                                  |
-| ----------- | -------- | -------- | -------------------------------------------- |
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
+| Parameter | Type     | Required | Description               |
+| --------- | -------- | -------- | ------------------------- |
+| `userId`  | `string` | Yes      | ID of the user to follow. |
 
 ### Headers
 
@@ -32,20 +32,13 @@ This endpoint allows an authenticated user to follow another user within a speci
 
 ### Body Parameters
 
-| Parameter   | Type     | Required | Description                                      |
-| ---------- | -------- | -------- | ------------------------------------------------ |
-| `followedId` | `string` | Yes      | The ID of the user to follow. |
+_None_
 
 #### Example Request
 
-```sh
-POST /proj1234/follows/
-Content-Type: application/json
+```http
+POST /proj1234/users/abcd123/follow
 Authorization: Bearer <ACCESS_TOKEN>
-
-{
-  "followedId": "67890"
-}
 ```
 
 ---
@@ -54,10 +47,8 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ### Success Response (201 Created)
 
-```json
-{
-  "message": "Follow relationship created successfully."
-}
+```
+(No response body)
 ```
 
 ### Error Responses
@@ -66,7 +57,8 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "error": "A user cannot follow themselves."
+  "error": "A user cannot follow themselves.",
+  "code": "follow/self-follow"
 }
 ```
 
@@ -74,15 +66,17 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "error": "One or both users involved in the follow do not exist."
+  "error": "One or both users involved in the follow do not exist.",
+  "code": "follow/user-not-found"
 }
 ```
 
-#### Follow Already Exists (409 Conflict)
+#### Already Following (409 Conflict)
 
 ```json
 {
-  "error": "Follow relationship already exists."
+  "error": "Follow relationship already exists.",
+  "code": "follow/already-exists"
 }
 ```
 
@@ -90,7 +84,9 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "error": "Internal server error."
+  "error": "Internal server error.",
+  "code": "follow/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -98,8 +94,7 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ## Notes
 
-- This endpoint requires authentication.
-- A user cannot follow themselves.
-- If a follow relationship already exists, the request will return a `409 Conflict` error.
-- A notification is triggered for the followed user upon a successful follow.
-
+- This endpoint creates a `Follow` relationship in the database.
+- A notification of type `new-follow` is triggered after the follow is created.
+- Users cannot follow themselves.
+- Duplicate follow requests are blocked with a 409 status.

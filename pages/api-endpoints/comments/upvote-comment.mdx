@@ -1,122 +1,105 @@
-
 # Upvote Comment
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/comments/:commentId/upvote`
+**URL:** `/:projectId/comments/:commentId/upvote`
 
 **Method:** `PATCH`
 
-**Authentication Required:** Yes (Requires a valid access token in the `Authorization` header)
+**Authentication Required:** Yes
 
-----------
+---
 
 ## Description
 
-This endpoint allows a user to upvote a comment. If a user has already upvoted the comment, they cannot upvote it again. If the user had previously downvoted the comment, their downvote will be removed.
+Upvotes a comment on behalf of the authenticated user.
 
-----------
+* Adds the user's ID to the comment's `upvotes` array.
+* Removes the user from `downvotes` if previously downvoted.
+* Increases the reputation of the comment author.
+* Sends a notification to the comment's author.
+
+---
 
 ## Request
 
+### Path Parameters
+
+| Parameter   | Type     | Required | Description                      |
+| ----------- | -------- | -------- | -------------------------------- |
+| `commentId` | `string` | Yes      | The ID of the comment to upvote. |
+
 ### Headers
 
--   `Authorization: Bearer <accessToken>` (Required, must contain a valid access token)
+| Header          | Type     | Required | Description                           |
+| --------------- | -------- | -------- | ------------------------------------- |
+| `Authorization` | `string` | Yes      | Bearer token for authenticated users. |
 
-### URL Parameters
-
-| Parameter   | Type     | Required | Description                        |
-|------------|----------|----------|------------------------------------|
-| `projectId` | `string` | Yes      | The project ID associated with the comment. |
-| `commentId` | `string` | Yes      | The ID of the comment to be upvoted. |
-
-
-----------
+---
 
 ## Response
 
-### Success Response (200 OK)
+### Success Response (`200 OK`)
+
+Returns the updated comment:
 
 ```json
 {
-  "id": "<COMMENT_ID>",
-  "projectId": "<PROJECT_ID>",
-  "userId": "<USER_ID>",
-  "entityId": "<ENTITY_ID>",
-  "parentId": "<PARENT_ID>",
-  "content": "<COMMENT_CONTENT>",
-  "gif": {
-    "id": "<GIF_ID>",
-    "gifUrl": "<GIF_URL>",
-    "gifPreviewUrl": "<GIF_PREVIEW_URL>",
-    "altText": "<ALT_TEXT>",
-    "url": "<URL>",
-    "aspectRatio": "<ASPECT_RATIO>"
-  },
-  "mentions": ["<UPDATED_MENTIONS_ARRAY>"],
-  "upvotes": ["<UPDATED_UPVOTES_ARRAY>"],
-  "downvotes": ["<UPDATED_DOWNVOTES_ARRAY>"]
+  "id": "comment-123",
+  "entityId": "entity-456",
+  "upvotes": ["user-789"],
+  "downvotes": [],
+  "content": "Great insight!",
+  ...
 }
 ```
+
+---
 
 ### Error Responses
 
-#### Missing `commentId` (400 Bad Request)
+#### Missing Comment ID (`400 Bad Request`)
 
 ```json
 {
-  "error": "Missing required data"
+  "error": "Missing required data",
+  "code": "comment/missing-data"
 }
 ```
 
-**Reason:** The request must include a `commentId` to specify which comment to upvote.
-
-#### Comment Not Found (404 Not Found)
+#### Not Found (`404 Not Found`)
 
 ```json
 {
-  "error": "Comment not found"
+  "error": "Comment not found",
+  "code": "comment/not-found"
 }
 ```
 
-**Reason:** The specified `commentId` does not exist or does not belong to the given `projectId`.
-
-#### Already Upvoted (409 Conflict)
+#### Already Upvoted (`409 Conflict`)
 
 ```json
 {
-  "error": "User has already upvoted this comment"
+  "error": "User has already upvoted this comment",
+  "code": "comment/already-upvoted"
 }
 ```
 
-**Reason:** The user has already upvoted this comment and cannot upvote it again.
-
-#### Unauthorized Request (401 Unauthorized)
+#### Server Error (`500 Internal Server Error`)
 
 ```json
 {
-  "error": "Missing or invalid authorization token"
+  "error": "Internal server error.",
+  "code": "comment/server-error",
+  "details": "[error message]"
 }
 ```
 
-**Reason:** The request did not include a valid access token in the `Authorization` header.
-
-#### Server Error (500 Internal Server Error)
-
-```json
-{
-  "error": "Server error"
-}
-```
-
-**Reason:** An unexpected error occurred while processing the request.
-
-----------
+---
 
 ## Notes
 
--   A user cannot upvote a comment more than once.
--   If a user has previously downvoted the comment, their downvote will be removed upon upvoting.
--   The `Authorization` header must be provided and contain a valid access token.
--   The response will contain the updated `upvotes` and `downvotes` arrays reflecting the latest state.
--   A notification is sent to the comment owner when their comment is upvoted.
+* If the user already upvoted the comment, a `409 Conflict` error is returned.
+* Reputation is awarded to the comment's author.
+* A notification is triggered to inform the comment's author of the upvote.
+* The user's ID is removed from `downvotes` if previously present.

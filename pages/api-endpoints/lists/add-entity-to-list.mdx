@@ -2,7 +2,7 @@
 
 ## Endpoint
 
-**URL:** `/:projectId/lists/add-entity`
+**URL:** `/:projectId/lists/:listId/add-entity`
 
 **Method:** `PATCH`
 
@@ -12,17 +12,11 @@
 
 ## Description
 
-This endpoint allows users to add an entity to a specified list. The list must belong to the authenticated user, and the entity must not already be in the list.
+Adds an entity to the specified list for the authenticated user. Prevents duplicate additions.
 
 ---
 
 ## Request
-
-### Path Parameters
-
-| Parameter   | Type     | Required | Description                                 |
-| ----------- | -------- | -------- | ------------------------------------------- |
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
 
 ### Headers
 
@@ -30,23 +24,23 @@ This endpoint allows users to add an entity to a specified list. The list must b
 | --------------- | -------- | -------- | -------------------------------- |
 | `Authorization` | `string` | Yes      | Bearer token for authentication. |
 
+### Path Parameters
+
+| Parameter | Type     | Required | Description            |
+| --------- | -------- | -------- | ---------------------- |
+| `listId`  | `string` | Yes      | ID of the target list. |
+
 ### Body Parameters
 
-| Parameter  | Type     | Required | Description                       |
-| ---------- | -------- | -------- | --------------------------------- |
-| `listId`   | `string` | Yes      | The ID of the list to update.     |
-| `entityId` | `string` | Yes      | The ID of the entity to be added. |
+| Field      | Type     | Required | Description                          |
+| ---------- | -------- | -------- | ------------------------------------ |
+| `entityId` | `string` | Yes      | ID of the entity to add to the list. |
 
 #### Example Request
 
-```sh
-PATCH /proj1234/lists/add-entity
-Content-Type: application/json
-Authorization: Bearer <ACCESS_TOKEN>
-
+```json
 {
-  "listId": "67890",
-  "entityId": "entity123"
+  "entityId": "abc123"
 }
 ```
 
@@ -58,36 +52,24 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "id": "67890",
-  "projectId": "12345",
-  "userId": "56789",
-  "parentId": "123",
-  "name": "My List",
-  "entityIds": ["entity123", "entity456"],
-  "entities": [
-    {
-      "id": "entity123",
-      "title": "Sample Entity 123",
-      "content": "This is the content of entity 123."
-    },
-    {
-      "id": "entity456",
-      "title": "Sample Entity 456",
-      "content": "This is the content of entity 456."
-    }
-  ],
-  "createdAt": "2024-02-12T10:00:00Z",
-  "updatedAt": "2024-02-12T10:05:00Z"
+  "id": "list_abc",
+  "projectId": "proj1234",
+  "userId": "user_xyz",
+  "name": "Favorites",
+  "entityIds": ["abc123", "xyz789"],
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z"
 }
 ```
 
 ### Error Responses
 
-#### Missing or Invalid Data (400 Bad Request)
+#### Missing listId or entityId (400 Bad Request)
 
 ```json
 {
-  "error": "Missing projectId, entityId or listId in request body"
+  "error": "Missing listId",
+  "code": "list/missing-data"
 }
 ```
 
@@ -95,7 +77,17 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "error": "List not found"
+  "error": "List not found",
+  "code": "list/not-found"
+}
+```
+
+#### Entity Already Exists (409 Conflict)
+
+```json
+{
+  "error": "Entity already exists in the list",
+  "code": "list/entity-exists"
 }
 ```
 
@@ -103,7 +95,9 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error.",
+  "code": "list/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -111,6 +105,5 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ## Notes
 
-- The authenticated user must own the list.
-- The entity must not already be in the list.
-- The response includes the updated list details with the newly added entity.
+- Entity will not be added again if it already exists in the list.
+- The response includes the updated and populated list object.

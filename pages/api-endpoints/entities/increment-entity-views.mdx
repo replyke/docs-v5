@@ -1,31 +1,28 @@
-
 # Increment Entity Views
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/entities/:entityId/increment-views`
+**URL:** `/entities/:entityId/increment-views`
 
 **Method:** `PATCH`
 
 **Authentication Required:** No
 
-----------
+---
 
 ## Description
 
-This endpoint allows the client to increment the view count of an entity. It is typically called when an entity is viewed to keep track of its popularity.
+This endpoint increments the view count of a specific entity by 1. It is typically triggered when a user visits or opens the entity. No authentication is required.
 
-----------
+---
 
 ## Request
 
-### URL Parameters
+### Path Parameters
 
-
-| Parameter    | Type     | Required | Description |
-|-------------|----------|----------|-------------|
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
-| `entityId`  | `string` | Yes      | The ID of the entity whose view count should be incremented. |
+| Parameter  | Type     | Required | Description                  |
+| ---------- | -------- | -------- | ---------------------------- |
+| `entityId` | `string` | Yes      | The unique ID of the entity. |
 
 ### Headers
 
@@ -37,27 +34,35 @@ _None_
 
 #### Example Request
 
-```sh
-PATCH /proj1234/entities/67890/increment-views
+```http
+PATCH /entities/abc123/increment-views
 ```
 
-----------
+---
 
 ## Response
 
 ### Success Response (200 OK)
 
-```sh
-(no content)
+Returns the updated entity object with the incremented view count.
+
+```json
+{
+  "id": "abc123",
+  "views": 21,
+  "title": "Entity Title",
+  ... other entity fields ...
+}
 ```
 
 ### Error Responses
 
-#### Missing Entity ID (400 Bad Request)
+#### Invalid Entity ID (400 Bad Request)
 
 ```json
 {
-  "error": "Invalid entityId"
+  "error": "Invalid entity ID.",
+  "code": "entity/invalid-id"
 }
 ```
 
@@ -65,7 +70,8 @@ PATCH /proj1234/entities/67890/increment-views
 
 ```json
 {
-  "error": "Entity not found"
+  "error": "Entity not found.",
+  "code": "entity/not-found"
 }
 ```
 
@@ -73,14 +79,14 @@ PATCH /proj1234/entities/67890/increment-views
 
 ```json
 {
-  "error": "An error occurred while updating entity views"
+  "error": "An error occurred while updating entity views.",
+  "code": "entity/server-error",
+  "details": "<error message>"
 }
 ```
 
-----------
+---
 
 ## Notes
 
--   This endpoint does not require authentication.
--   The view count is incremented each time this endpoint is called.
--   The response body is empty for a successful request.
+- This endpoint is safe to call multiple times.

@@ -1,80 +1,79 @@
-# Create Report
+# Submit a Report
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/reports/`
+**URL:** `/:projectId/reports`
 
 **Method:** `POST`
 
-**Authentication Required:** Yes (Requires a valid access token in the `Authorization` header)
+**Authentication Required:** Yes (Access Token in Authorization Header)
 
-----------
+---
 
 ## Description
 
-This endpoint allows users to report an entity or a comment. If a report already exists for the target, the reporting user will be added to the list of reporters. Otherwise, a new report will be created.
+Submit a report for a `Comment` or `Entity`. Reports are tracked per user to avoid duplicate submissions.
 
-----------
+---
 
 ## Request
 
 ### Headers
 
--   `Authorization: Bearer <accessToken>` (Required, must contain a valid access token)
+| Header          | Type     | Required | Description                      |
+| --------------- | -------- | -------- | -------------------------------- |
+| `Authorization` | `string` | Yes      | Bearer token for authentication. |
 
-### URL Parameters
+### Body Parameters
 
+| Field        | Type     | Required | Description                                       |
+| ------------ | -------- | -------- | ------------------------------------------------- |
+| `targetId`   | `string` | Yes      | ID of the target being reported.                  |
+| `targetType` | `string` | Yes      | Either `Comment` or `Entity`.                     |
+| `reason`     | `string` | Yes      | Reason for the report.                            |
+| `details`    | `string` | No       | Optional additional information about the report. |
 
-| Parameter   | Type     | Required | Description |
-|------------|----------|----------|-------------|
-| `projectId` | `string` | Yes | The project ID associated with the report. |
-
-### Request Body
-| Parameter   | Type     | Required | Description |
-|------------|----------|----------|-------------|
-| `targetId`  | `string` | Yes | The ID of the comment or entity being reported. |
-| `targetType` | `string` | Yes | The type of the reported item. Must be either `Comment` or `Entity`. |
-| `reason`    | `string` | Yes | The reason for reporting the target. |
-| `details`   | `string` | No  | Additional details about the report. |
-
-Additional details about the report.
-
-#### Example Request Body
+#### Example Request
 
 ```json
 {
-  "targetId": "<TARGET_ID>",
+  "targetId": "comment_456",
   "targetType": "Comment",
-  "reason": "illegalActivity",
-  "details": "This comment contains offensive language."
+  "reason": "Spam",
+  "details": "This comment contains promotional links."
 }
 ```
 
-----------
+---
 
 ## Response
 
-### Success Response (201 Created)
+### Success Responses
+
+#### New Report Created (201 Created)
 
 ```json
 {
-  "message": "Report submitted successfully"
+  "message": "Report submitted successfully",
+  "code": "report/created"
 }
 ```
 
-### Success Response (200 OK) - User Already Reported
+#### Report Already Exists (200 OK)
 
 ```json
 {
-  "message": "Report already registered by this user"
+  "message": "Report already registered by this user",
+  "code": "report/already-reported"
 }
 ```
 
-### Success Response (200 OK) - Report Updated
+#### Report Updated (200 OK)
 
 ```json
 {
-  "message": "Report updated successfully"
+  "message": "Report updated successfully",
+  "code": "report/updated"
 }
 ```
 
@@ -84,75 +83,52 @@ Additional details about the report.
 
 ```json
 {
-  "error": "Missing required fields in request body"
+  "error": "Missing required fields",
+  "code": "report/missing-data"
 }
 ```
 
-**Reason:** The request is missing `targetId`, `targetType`, or `reason`.
-
-#### Invalid `targetType` (400 Bad Request)
+#### Invalid Target Type (400 Bad Request)
 
 ```json
 {
-  "error": "Invalid targetType. Must be 'Comment' or 'Entity'."
+  "error": "Invalid targetType",
+  "code": "report/invalid-type"
 }
 ```
-
-**Reason:** The `targetType` must be either `Comment` or `Entity`.
 
 #### Target Not Found (404 Not Found)
 
 ```json
 {
-  "error": "Comment not found"
+  "error": "Comment not found",
+  "code": "report/target-not-found"
 }
 ```
 
-**Reason:** The specified `targetId` does not exist or is not a valid comment.
+#### Foreign Key Violation (400 Bad Request)
 
 ```json
 {
-  "error": "Entity not found"
+  "error": "Invalid targetId or projectId",
+  "code": "report/invalid-foreign-key"
 }
 ```
-
-**Reason:** The specified `targetId` does not exist or is not a valid entity.
-
-#### Invalid Foreign Key (400 Bad Request)
-
-```json
-{
-  "error": "Invalid targetId or projectId"
-}
-```
-
-**Reason:** The provided `targetId` or `projectId` does not exist in the database.
-
-#### Unauthorized Request (401 Unauthorized)
-
-```json
-{
-  "error": "Missing or invalid authorization token"
-}
-```
-
-**Reason:** The request did not include a valid access token in the `Authorization` header.
 
 #### Server Error (500 Internal Server Error)
 
 ```json
 {
-  "error": "Server error"
+  "error": "Server error",
+  "code": "report/server-error",
+  "details": "<Error message>"
 }
 ```
 
-**Reason:** An unexpected error occurred while processing the request.
-
-----------
+---
 
 ## Notes
 
--   Users can only report an entity or a comment.
--   If a report already exists for the target, the user is added to the list of reporters.
--   Reports are stored at the project level.
--   The `Authorization` header must be provided and contain a valid access token.
+- Only `Comment` and `Entity` are valid `targetType` values.
+- Multiple users can report the same target, but each user is recorded only once.
+- Submitting a second report for the same target updates the reporter list.

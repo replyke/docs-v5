@@ -12,7 +12,7 @@
 
 ## Description
 
-This endpoint allows clients to retrieve the number of users a specific user is following within a project.
+Retrieve the number of users a specific user is following within a given project.
 
 ---
 
@@ -20,18 +20,17 @@ This endpoint allows clients to retrieve the number of users a specific user is 
 
 ### URL Parameters
 
-| Parameter   | Type     | Required | Description                                 |
-| ----------- | -------- | -------- | ------------------------------------------- |
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
-| `userId`    | `string` | Yes      | The ID of the user whose following count is being fetched. |
+| Parameter | Type     | Required | Description                                                |
+| --------- | -------- | -------- | ---------------------------------------------------------- |
+| `userId`  | `string` | Yes      | The ID of the user whose following count is being fetched. |
 
 ### Headers
 
-*None*
+_None_
 
 ### Body Parameters
 
-*None*
+_None_
 
 #### Example Request
 
@@ -57,7 +56,8 @@ GET /proj1234/users/67890/following-count
 
 ```json
 {
-  "error": "Missing or invalid userId in request query"
+  "error": "Missing or invalid userId in request parameters",
+  "code": "user/invalid-user-id"
 }
 ```
 
@@ -65,7 +65,9 @@ GET /proj1234/users/67890/following-count
 
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error",
+  "code": "user/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -73,5 +75,5 @@ GET /proj1234/users/67890/following-count
 
 ## Notes
 
-- This endpoint does not require authentication.
-- The response provides only the count of users the specified user is following, not the list of users.
+- This endpoint does **not** require authentication.
+- The count reflects how many users the specified user is following.

@@ -1,4 +1,4 @@
-# Fetch Root List
+# Get Root List
 
 ## Endpoint
 
@@ -12,23 +12,34 @@
 
 ## Description
 
-This endpoint retrieves the root list for the authenticated user within a specific project. If no root list exists, a new one is created and returned.
+Retrieves the authenticated user's root list. If it doesn't exist, a new one is created automatically.
 
 ---
 
 ## Request
-
-### Path Parameters
-
-| Parameter   | Type     | Required | Description                                 |
-| ----------- | -------- | -------- | ------------------------------------------- |
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
 
 ### Headers
 
 | Header          | Type     | Required | Description                      |
 | --------------- | -------- | -------- | -------------------------------- |
 | `Authorization` | `string` | Yes      | Bearer token for authentication. |
+
+### Path Parameters
+
+| Parameter   | Type     | Required | Description                    |
+| ----------- | -------- | -------- | ------------------------------ |
+| `projectId` | `string` | Yes      | The ID of the project context. |
+
+### Query Parameters
+
+*None*
+
+#### Example Request
+
+```http
+GET /proj1234/lists/root
+Authorization: Bearer <ACCESS_TOKEN>
+```
 
 ---
 
@@ -38,24 +49,16 @@ This endpoint retrieves the root list for the authenticated user within a specif
 
 ```json
 {
-  "id": "12345",
+  "id": "list_abc",
+  "projectId": "proj1234",
+  "userId": "user_xyz",
   "name": "root",
-  "userId": "67890",
   "isRoot": true,
   "parentId": null,
-  "entityIds": ["entity1", "entity2"],
-  "entities": [
-    {
-      "id": "entity1",
-      "title": "Sample Entity 1",
-      "content": "This is the content of entity 1."
-    },
-    {
-      "id": "entity2",
-      "title": "Sample Entity 2",
-      "content": "This is the content of entity 2."
-    }
-  ]
+  "entityIds": [],
+  "subLists": [],
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z"
 }
 ```
 
@@ -65,7 +68,9 @@ This endpoint retrieves the root list for the authenticated user within a specif
 
 ```json
 {
-  "error": "Server error"
+  "error": "Server error",
+  "code": "list/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -73,7 +78,6 @@ This endpoint retrieves the root list for the authenticated user within a specif
 
 ## Notes
 
-- The root list is a special list that serves as the top-level container for other lists.
-- If a root list does not exist, it is automatically created for the authenticated user.
-- The response includes a populated list with its entities.
-- Authentication is required to retrieve the root list.
+* Each user has a single root list per project.
+* If the root list does not exist, it will be created automatically.
+* The response includes all populated sub-lists and entity IDs if available.

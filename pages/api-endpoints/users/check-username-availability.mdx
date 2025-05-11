@@ -12,7 +12,7 @@
 
 ## Description
 
-This endpoint allows clients to check if a given username is available for use within a specific project.
+Check if a given username is available for use within a specific project.
 
 ---
 
@@ -20,18 +20,17 @@ This endpoint allows clients to check if a given username is available for use w
 
 ### Query Parameters
 
-| Parameter   | Type     | Required | Description                                                |
-| ----------- | -------- | -------- | ---------------------------------------------------------- |
-| `projectId` | `string` | Yes      | The project ID associated with the request.               |
-| `username`  | `string` | Yes      | The username to check for availability.                   |
+| Parameter  | Type     | Required | Description                             |
+| ---------- | -------- | -------- | --------------------------------------- |
+| `username` | `string` | Yes      | The username to check for availability. |
 
 ### Headers
 
-*None*
+_None_
 
 ### Body Parameters
 
-*None*
+_None_
 
 #### Example Request
 
@@ -49,8 +48,7 @@ GET /proj1234/users/check-username?username=johndoe
 
 ```json
 {
-  "available": true,
-  "message": "Username is available."
+  "available": true
 }
 ```
 
@@ -58,8 +56,7 @@ GET /proj1234/users/check-username?username=johndoe
 
 ```json
 {
-  "available": false,
-  "message": "Username is already taken."
+  "available": false
 }
 ```
 
@@ -69,7 +66,8 @@ GET /proj1234/users/check-username?username=johndoe
 
 ```json
 {
-  "error": "username is required and must be a string."
+  "error": "Username is required and must be a string.",
+  "code": "username/invalid-input"
 }
 ```
 
@@ -77,7 +75,9 @@ GET /proj1234/users/check-username?username=johndoe
 
 ```json
 {
-  "error": "An error occurred while checking username availability."
+  "error": "An error occurred while checking username availability.",
+  "code": "username/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -85,7 +85,5 @@ GET /proj1234/users/check-username?username=johndoe
 
 ## Notes
 
-- This endpoint does not require authentication.
-- The response indicates whether the username is available or already taken.
-- Usernames are checked within the specified `projectId` scope.
-
+- This endpoint does **not** require authentication.
+- Only exact matches are considered (case-sensitive).

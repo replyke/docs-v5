@@ -1,155 +1,55 @@
-
-# Fetch Many Entities
+# Fetch Entities
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/entities/`
+**URL:** `/:projectId/entities`
 
 **Method:** `GET`
 
-**Authentication Required:** Optional (Authorization token can be included but is not mandatory)
+**Authentication Required:** Optional
 
-----------
+---
 
 ## Description
 
-This endpoint allows fetching multiple entities based on various filters and sorting criteria. It supports optional authentication, meaning it can be accessed with or without an access token. Entities can be filtered by keywords, metadata, content, title, media presence, location, and user-specific preferences (e.g., only fetching posts from followed users). Sorting options include `new`, `top`, `hot`, and `controversial`, and results can be paginated.
+Fetches a list of entities with full support for pagination, sorting, and advanced filtering. Can be accessed with or without authentication.
 
-----------
+---
 
 ## Request
 
 ### Headers
 
--   `Authorization: Bearer <accessToken>` (Optional, required if fetching user-specific data like followed users' entities)
-
-### URL Parameters
-
-
-| Parameter       | Type     | Required | Description |
-|----------------|----------|----------|-------------|
-| `projectId`    | `string` | Yes      | The project ID associated with the request. |
+| Header          | Type     | Required | Description                                   |
+| --------------- | -------- | -------- | --------------------------------------------- |
+| `Authorization` | `string` | No       | Bearer token to identify the user (optional). |
 
 ### Query Parameters
-| Parameter         | Type     | Required | Description |
-|------------------|----------|----------|-------------|
-| `userId`         | `string` | No       | Fetch entities created by a specific user. |
-| `sortBy`         | `string` | No       | Sorting method: `new`, `top`, `hot`, or `controversial`. Default is `hot`. |
-| `page`           | `number` | No       | The page number for pagination (default: `1`). Must be a whole number >= 1. |
-| `limit`          | `number` | No       | The number of entities per page (default: `10`). |
-| `timeFrame`      | `string` | No       | Limits results to entities created within a specific timeframe: `hour`, `day`, `week`, `month`, or `year`. |
-| `keywordsFilters` | `object` | No       | Filters entities by keywords using inclusion/exclusion logic. See below for details. |
-| `metadataFilters` | `object` | No       | Filters entities based on metadata presence and values. See below for details. |
-| `titleFilters`    | `object` | No       | Filters entities based on title presence and text matching. See below for details. |
-| `contentFilters`  | `object` | No       | Filters entities based on content presence and text matching. See below for details. |
-| `mediaFilters`    | `object` | No       | Filters entities based on whether they contain media. See below for details. |
-| `locationFilters` | `object` | No       | Filters entities based on proximity to a given location. See below for details. |
-| `followedOnly`    | `boolean`| No       | If `true`, returns only entities from followed users (requires authentication). |
 
+| Parameter            | Type     | Required | Description                                                          |
+| -------------------- | -------- | -------- | -------------------------------------------------------------------- |
+| `page`               | `number` | No       | Page number (default: 1).                                            |
+| `limit`              | `number` | No       | Number of results per page (max: 100).                               |
+| `sortBy`             | `string` | No       | Sorting strategy: `hot` (default), `top`, `new`, or `controversial`. |
+| `timeFrame`          | `string` | No       | Filter by creation time: `hour`, `day`, `week`, `month`, `year`.     |
+| `sourceId`           | `string` | No       | Filter entities by a specific sourceId.                              |
+| `userId`             | `string` | No       | Filter by a specific userId.                                         |
+| `followedOnly`       | `string` | No       | `true` to only show entities by followed users (requires auth).      |
+| `keywordsFilters`    | `object` | No       | Filter entities by keyword inclusion/exclusion.                      |
+| `metadataFilters`    | `object` | No       | Filter entities by metadata keys and values.                         |
+| `titleFilters`       | `object` | No       | Filter by title presence or matching values.                         |
+| `contentFilters`     | `object` | No       | Filter by content presence or matching values.                       |
+| `attachmentsFilters` | `object` | No       | Filter based on whether attachments exist.                           |
+| `locationFilters`    | `object` | No       | Filter by location with radius, latitude, and longitude.             |
 
-#### Example Request URL
+#### Example Request
 
-```
-GET https://api.replyke.com/:projectId/entities/?sortBy=top&page=1&limit=20&timeFrame=week
-```
-
-----------
-
-## Filtering Parameters
-
-### `keywordsFilters`
-
-Filters entities based on keywords.
-
-```json
-{
-  "includes": ["example", "news"],
-  "doesNotInclude": ["spam"]
-}
+```http
+GET /proj1234/entities?sortBy=top&limit=10&page=1&followedOnly=true
+Authorization: Bearer <ACCESS_TOKEN>
 ```
 
--   `includes`: The entity must contain at least one of these keywords.
--   `doesNotInclude`: The entity must NOT contain any of these keywords.
-
-### `metadataFilters`
-
-Filters based on metadata fields.
-
-```json
-{
-  "includes": {"category": "news"},
-  "doesNotInclude": {"category": "spam"},
-  "exists": ["author"],
-  "doesNotExist": ["deprecated"]
-}
-```
-
--   `includes`: The metadata must contain these key-value pairs.
--   `doesNotInclude`: The metadata must NOT contain these key-value pairs.
--   `exists`: The entity's metadata must contain these keys.
--   `doesNotExist`: The entity's metadata must NOT contain these keys.
-
-### `titleFilters`
-
-Filters entities based on the title field.
-
-```json
-{
-  "hasTitle": true,
-  "includes": ["important", "breaking"],
-  "doesNotInclude": ["old"]
-}
-```
-
--   `hasTitle`: `true` means entities must have a title, `false` means they must not.
--   `includes`: The title must contain at least one of these words.
--   `doesNotInclude`: The title must NOT contain any of these words.
-
-### `contentFilters`
-
-Filters entities based on the content field.
-
-```json
-{
-  "hasContent": true,
-  "includes": ["new feature", "update"],
-  "doesNotInclude": ["rumor"]
-}
-```
-
--   `hasContent`: `true` means entities must have content, `false` means they must not.
--   `includes`: The content must contain at least one of these words.
--   `doesNotInclude`: The content must NOT contain any of these words.
-
-### `mediaFilters`
-
-Filters entities based on whether they contain media.
-
-```json
-{
-  "hasMedia": true
-}
-```
-
--   `hasMedia`: `true` means entities must have media, `false` means they must not.
-
-### `locationFilters`
-
-Filters entities based on proximity to a given location.
-
-```json
-{
-  "latitude": 37.7749,
-  "longitude": -122.4194,
-  "radius": 5000
-}
-```
-
--   `latitude`: The latitude of the center point.
--   `longitude`: The longitude of the center point.
--   `radius`: The search radius in meters.
-
-----------
+---
 
 ## Response
 
@@ -158,35 +58,33 @@ Filters entities based on proximity to a given location.
 ```json
 [
   {
-    "id": "<ENTITY_ID>",
-    "projectId": "<PROJECT_ID>",
-    "referenceId": "<REFERENCE_ID>",
-    "userId": "<USER_ID>",
-    "title": "Entity Title",
-    "content": "Entity content...",
-    "keywords": ["example", "topic"],
-    "mentions": [{ "id": "user-1111", "username": "john_doe" }],
-    "location": { "type": "Point", "coordinates": [120.982, 14.604] },
-    "upvotes": [],
-    "downvotes": [],
-    "sharesCount": 0,
-    "views": 0,
-    "score": 0,
-    "metadata": { "category": "news" },
-    "createdAt": "<TIMESTAMP>",
-    "updatedAt": "<TIMESTAMP>",
-    "deletedAt": null
-  }
+    "id": "entity_123",
+    "userId": "user_abc",
+    "title": "First Post",
+    "content": "This is a sample entity.",
+    ...
+  },
+  ...
 ]
 ```
 
 ### Error Responses
 
-#### Invalid Query Parameter (400 Bad Request)
+#### Invalid Limit (400 Bad Request)
 
 ```json
 {
-  "error": "Invalid request: 'page' must be a whole number greater than 0"
+  "error": "Invalid request: limit must be a positive number.",
+  "code": "entity/invalid-limit"
+}
+```
+
+#### Invalid Page (400 Bad Request)
+
+```json
+{
+  "error": "Invalid request: page must be a whole number greater than 0.",
+  "code": "entity/invalid-page"
 }
 ```
 
@@ -194,14 +92,22 @@ Filters entities based on proximity to a given location.
 
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error.",
+  "code": "entity/server-error",
+  "details": "<Error message>"
 }
 ```
 
-----------
+---
 
 ## Notes
 
--   This endpoint supports advanced filtering using various filters documented above.
--   Sorting can be done via `hot`, `top`, `new`, or `controversial` sorting.
--   If `followedOnly` is provided, only entities from followed users are returned (if authenticated).
+- Sort options include:
+
+  - `hot`: Ranked by score (default).
+  - `top`: Most upvoted.
+  - `new`: Most recent.
+  - `controversial`: Balanced upvotes/downvotes.
+
+- When `followedOnly` is true, the response includes only posts by followed users (must be logged in).
+- Supports complex filters including geospatial queries, keyword matching, content presence, and metadata rules.

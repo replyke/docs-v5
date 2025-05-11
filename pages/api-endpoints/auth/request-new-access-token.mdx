@@ -1,47 +1,44 @@
-
 # Request New Access Token
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/auth/request-new-access-token`
+**URL:** `/:projectId/auth/request-new-access-token`
 
 **Method:** `POST`
 
-**Authentication Required:** Yes (Requires a valid refresh token)
+**Authentication Required:** No
 
-----------
+---
 
 ## Description
 
-This endpoint allows clients to request a new access token using a valid refresh token. The refresh token can be sent in the request body or as an `HttpOnly` cookie. If the token is valid, a new access token is issued.
+Request a new access token using a valid refresh token. The refresh token can be sent in the request body or as an HttpOnly cookie.
 
-----------
+---
 
 ## Request
 
 ### Headers
 
--   `Content-Type: application/json`
+| Header   | Type     | Required | Description                              |
+| -------- | -------- | -------- | ---------------------------------------- |
+| `Cookie` | `string` | No       | Can include `replyke-refresh-jwt` cookie |
 
 ### Body Parameters
 
-Parameter
+| Field          | Type     | Required | Description                                       |
+| -------------- | -------- | -------- | ------------------------------------------------- |
+| `refreshToken` | `string` | No       | JWT refresh token (optional if cookie is present) |
 
-Type
+#### Example Request
 
-Required
+```json
+{
+  "refreshToken": "<REFRESH_TOKEN>"
+}
+```
 
-Description
-
-`refreshToken`
-
-`string`
-
-No
-
-Refresh token (if not provided via cookie).
-
-----------
+---
 
 ## Response
 
@@ -50,62 +47,79 @@ Refresh token (if not provided via cookie).
 ```json
 {
   "success": true,
-  "accessToken": "<JWT_ACCESS_TOKEN>",
+  "accessToken": "<NEW_ACCESS_TOKEN>",
   "user": {
-    "id": "<USER_ID>",
-    "email": "<USER_EMAIL>",
-    "name": "<USER_NAME>",
-    "username": "<USER_USERNAME>",
-    "avatar": "<USER_AVATAR>",
-    "reputation": "<USER_REPUTATION>",
-    "bio": "<USER_BIO>",
-    "metadata": "<USER_METADATA>"
+    "id": "user_123",
+    "username": "janedoe",
+    "email": "jane@example.com",
+    "name": "Jane Doe",
+    "avatar": "https://example.com/avatar.jpg",
+    "bio": "Tech enthusiast",
+    "location": {
+      "type": "Point",
+      "coordinates": [-73.935242, 40.73061]
+    },
+    "birthdate": "1995-01-01T00:00:00.000Z",
+    "metadata": { "office": "boston" },
+    "suspensions": [],
+    "reputation": 0,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
   }
 }
+```
 
+#### No Refresh Token Provided (200 OK)
+
+```json
+{
+  "accessToken": null,
+  "user": null
+}
 ```
 
 ### Error Responses
 
-#### Missing `refreshToken` (401 Unauthorized)
+#### Invalid Refresh Token Structure (403 Forbidden)
 
 ```json
 {
-  "error": "Missing refresh token"
+  "error": "Invalid refresh token.",
+  "code": "auth/invalid-refresh-token"
 }
-
 ```
 
-**Reason:** No refresh token was found in the request body or cookies.
-
-#### Invalid or Expired Token (403 Forbidden)
+#### Token Not Recognized (403 Forbidden)
 
 ```json
 {
-  "error": "Invalid or expired refresh token"
+  "error": "Refresh token not recognized.",
+  "code": "auth/refresh-token-mismatch"
 }
-
 ```
-
-**Reason:** The provided refresh token could not be verified or does not match the stored token.
 
 #### User Not Found (403 Forbidden)
 
 ```json
 {
-  "error": "User not found"
+  "error": "User not found.",
+  "code": "auth/no-user-found"
 }
-
 ```
 
-**Reason:** The user associated with the refresh token does not exist.
+#### Invalid or Expired Token (403 Forbidden)
 
-----------
+```json
+{
+  "error": "Invalid or expired refresh token.",
+  "code": "auth/refresh-token-invalid",
+  "details": "<Error message>"
+}
+```
+
+---
 
 ## Notes
 
--   The refresh token can be provided as a request body parameter or automatically retrieved from the `replyke-refresh-jwt` cookie.
--   The new access token must be attached to the `Authorization` header (`Bearer <accessToken>`) for subsequent authenticated requests.
--   Access tokens are valid for 30 minutes. After expiration, a new one must be requested using this endpoint.
--   Mobile apps should securely store the refresh token using `expo-secure-store` or `react-native-keychain` as cookies are not available.
--   This endpoint does **not** issue a new refresh token, only a new access token.
+- The `replyke-refresh-jwt` cookie takes precedence if both are provided.
+- Returns null tokens and user object if no token is supplied.

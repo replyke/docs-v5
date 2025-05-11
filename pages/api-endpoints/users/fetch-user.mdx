@@ -2,7 +2,7 @@
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/users/:userId`
+**URL:** `/:projectId/users/:userId`
 
 **Method:** `GET`
 
@@ -12,25 +12,28 @@
 
 ## Description
 
-This endpoint allows clients to fetch details of a specific user within a project.
+Fetch details of a specific user by their ID.
 
 ---
 
 ## Request
 
 ### URL Parameters
-| Parameter    | Type     | Required | Description |
-|-------------|----------|----------|-------------|
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
-| `userId`    | `string` | Yes      | The ID of the user being fetched. |
+
+| Parameter | Type     | Required | Description                  |
+| --------- | -------- | -------- | ---------------------------- |
+| `userId`  | `string` | Yes      | The ID of the user to fetch. |
 
 ### Headers
+
 _None_
 
 ### Body Parameters
+
 _None_
 
 #### Example Request
+
 ```sh
 GET /proj1234/users/67890
 ```
@@ -40,11 +43,12 @@ GET /proj1234/users/67890
 ## Response
 
 ### Success Response (200 OK)
+
 ```json
 {
   "id": "67890",
   "projectId": "12345",
-  "referenceId": "user-ref-001",
+  "foreignId": "user-ref-001",
   "name": "John Doe",
   "username": "johndoe",
   "avatar": "https://example.com/avatar.jpg",
@@ -54,12 +58,6 @@ GET /proj1234/users/67890
   "location": {
     "type": "Point",
     "coordinates": [40.7128, -74.006]
-  },
-  "suspension": {
-    "isSuspended": false,
-    "reason": null,
-    "startDate": null,
-    "endDate": null
   },
   "metadata": {
     "preferredLanguage": "en",
@@ -71,32 +69,38 @@ GET /proj1234/users/67890
 ```
 
 ### Error Responses
-#### Missing User ID (400 Bad Request)
+
+#### Missing or Invalid User ID (400 Bad Request)
+
 ```json
 {
-  "error": "Missing userId in request query"
+  "error": "Missing or invalid userId in request parameters",
+  "code": "user/invalid-user-id"
 }
 ```
 
 #### User Not Found (404 Not Found)
+
 ```json
 {
-  "error": "User not found"
+  "error": "User not found",
+  "code": "user/not-found"
 }
 ```
 
 #### Server Error (500 Internal Server Error)
+
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error",
+  "code": "user/server-error",
+  "details": "<Error message>"
 }
 ```
 
 ---
 
 ## Notes
-- This endpoint does not require authentication.
-- Sensitive fields such as password hash, email, account status, and secure metadata are excluded from the response.
-- The `suspension` object provides details about any active suspensions on the user account.
-- `metadata` is free-form and can contain any additional user-specific details stored by the project.
 
+- This endpoint excludes sensitive fields such as email, password hash, and secure metadata.
+- Useful for displaying public profile information of a user.

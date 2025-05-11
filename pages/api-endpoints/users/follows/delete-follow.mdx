@@ -1,0 +1,81 @@
+# Unfollow User
+
+## Endpoint
+
+**URL:** `/:projectId/users/:userId/follow`
+
+**Method:** `DELETE`
+
+**Authentication Required:** Yes (Access Token in Authorization Header)
+
+---
+
+## Description
+
+Remove an existing follow relationship between the authenticated user and the specified user.
+
+---
+
+## Request
+
+### Path Parameters
+
+| Parameter | Type     | Required | Description                 |
+| --------- | -------- | -------- | --------------------------- |
+| `userId`  | `string` | Yes      | ID of the user to unfollow. |
+
+### Headers
+
+| Header          | Type     | Required | Description                      |
+| --------------- | -------- | -------- | -------------------------------- |
+| `Authorization` | `string` | Yes      | Bearer token for authentication. |
+
+### Body Parameters
+
+_None_
+
+#### Example Request
+
+```http
+DELETE /proj1234/users/abcd123/follow
+Authorization: Bearer <ACCESS_TOKEN>
+```
+
+---
+
+## Response
+
+### Success Response (204 No Content)
+
+```
+(No response body)
+```
+
+### Error Responses
+
+#### Follow Not Found (404 Not Found)
+
+```json
+{
+  "error": "Follow relationship does not exist.",
+  "code": "follow/not-found"
+}
+```
+
+#### Server Error (500 Internal Server Error)
+
+```json
+{
+  "error": "Internal server error.",
+  "code": "follow/server-error",
+  "details": "<Error message>"
+}
+```
+
+---
+
+## Notes
+
+- Requires authentication.
+- Returns `204 No Content` on successful deletion.
+- Returns `404` if no follow relationship was found.

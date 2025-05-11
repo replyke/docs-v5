@@ -1,8 +1,8 @@
-# Create New List
+# Create Sub-List
 
 ## Endpoint
 
-**URL:** `/:projectId/lists/`
+**URL:** `/:projectId/lists/:listId/sub-lists`
 
 **Method:** `POST`
 
@@ -12,7 +12,7 @@
 
 ## Description
 
-This endpoint allows clients to create a new sublist. The list must have a valid parent list ID and a name. Authentication is required.
+Creates a new sub-list (nested list) under the specified parent list.
 
 ---
 
@@ -20,9 +20,9 @@ This endpoint allows clients to create a new sublist. The list must have a valid
 
 ### Path Parameters
 
-| Parameter   | Type     | Required | Description                                 |
-| ----------- | -------- | -------- | ------------------------------------------- |
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
+| Parameter | Type     | Required | Description                         |
+| --------- | -------- | -------- | ----------------------------------- |
+| `listId`  | `string` | Yes      | ID of the parent list to nest under |
 
 ### Headers
 
@@ -32,21 +32,15 @@ This endpoint allows clients to create a new sublist. The list must have a valid
 
 ### Body Parameters
 
-| Parameter  | Type     | Required | Description                                 |
-| ---------- | -------- | -------- | ------------------------------------------- |
-| `listName` | `string` | Yes      | The name of the new list.                   |
-| `parentId` | `string` | Yes      | The ID of the parent list for nested lists. |
+| Field      | Type     | Required | Description              |
+| ---------- | -------- | -------- | ------------------------ |
+| `listName` | `string` | Yes      | Name of the new sub-list |
 
 #### Example Request
 
-```sh
-POST /proj1234/lists/
-Content-Type: application/json
-Authorization: Bearer <ACCESS_TOKEN>
-
+```json
 {
-  "listName": "My New List",
-  "parentId": "67890"
+  "listName": "Ideas"
 }
 ```
 
@@ -54,37 +48,38 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ## Response
 
-### Success Response (200 OK)
+### Success Response (201 Created)
 
 ```json
 {
-  "id": "98765",
-  "projectId": "12345",
-  "userId": "56789",
-  "parentId": "67890",
-  "name": "My New List",
+  "id": "list_456",
+  "projectId": "proj_123",
+  "userId": "user_abc",
+  "name": "Ideas",
+  "parentId": "list_123",
   "entityIds": [],
-  "entities": [],
-  "createdAt": "2024-02-12T10:00:00Z",
-  "updatedAt": "2024-02-12T10:00:00Z"
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z"
 }
 ```
 
 ### Error Responses
 
-#### Missing or Invalid Data (400 Bad Request)
+#### Missing Parameters (400 Bad Request)
 
 ```json
 {
-  "error": "Missing required parameters in request body"
+  "error": "Missing required parameters in request body",
+  "code": "list/missing-parameters"
 }
 ```
 
-#### Invalid Parent List ID (400 Bad Request)
+#### Invalid Parent List (400 Bad Request)
 
 ```json
 {
-  "error": "Invalid parent list ID for sublist"
+  "error": "Invalid parent list ID for sub-list",
+  "code": "list/invalid-parent"
 }
 ```
 
@@ -92,7 +87,9 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "error": "Server error"
+  "error": "Server error",
+  "code": "list/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -100,6 +97,6 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ## Notes
 
-- The `parentId` must be a valid existing list ID.
-- The `listName` must be provided and cannot be empty.
-- The created list will be returned with its details after successful creation.
+* The authenticated user's ID is automatically associated with the new list.
+* Only existing parent lists can be used for sub-list creation.
+* The response includes the populated list details.

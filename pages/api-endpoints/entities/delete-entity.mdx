@@ -1,96 +1,202 @@
+Here's the full API documentation for the `DELETE /entities/:entityId` endpoint:
+
+---
 
 # Delete Entity
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/entities/:entityId`
-
+**URL:** `/entities/:entityId`
 **Method:** `DELETE`
-
 **Authentication Required:** Yes
 
-----------
+---
 
 ## Description
 
-This endpoint allows an authorized user to delete an entity. The entity can be deleted by either its author or an admin of the project.
+Deletes an existing entity within the project.
+Only the entity author or a master user can perform this operation.
+Deletion also deducts reputation from the original author.
 
-----------
+---
 
 ## Request
 
-### URL Parameters
+### Path Parameters
 
-
-| Parameter    | Type     | Required | Description |
-|-------------|----------|----------|-------------|
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
-| `entityId`  | `string` | Yes      | The ID of the entity to be deleted. |
+| Parameter  | Type     | Required | Description                     |
+| ---------- | -------- | -------- | ------------------------------- |
+| `entityId` | `string` | Yes      | The ID of the entity to delete. |
 
 ### Headers
-| Header        | Type   | Required | Description |
-|--------------|--------|----------|-------------|
-| `Authorization` | `string` | Yes | Bearer token for authentication. |
 
-### Body Parameters
+| Header          | Type     | Required | Description                           |
+| --------------- | -------- | -------- | ------------------------------------- |
+| `Authorization` | `string` | Yes      | Bearer token for authenticated users. |
 
-_None_
-
-#### Example Request
-
-```sh
-DELETE /proj1234/entities/67890
-Authorization: Bearer <token>
-```
-
-----------
+---
 
 ## Response
 
-### Success Response (204 No Content)
+### Success Response (`204 No Content`)
 
-```sh
-(no content)
-```
+Entity was successfully deleted. No response body is returned.
+
+---
 
 ### Error Responses
 
-#### Missing Entity ID (400 Bad Request)
+#### Invalid ID (`400 Bad Request`)
 
 ```json
 {
-  "error": "Invalid entityId"
+  "error": "Invalid entityId.",
+  "code": "entity/invalid-id"
 }
 ```
 
-#### Entity Not Found (404 Not Found)
+#### Not Found (`404 Not Found`)
 
 ```json
 {
-  "error": "Entity not found"
+  "error": "Entity not found.",
+  "code": "entity/not-found"
 }
 ```
 
-#### Unauthorized Access (403 Forbidden)
+#### Unauthorized (`403 Forbidden`)
 
 ```json
 {
-  "error": "Not authorized to delete this entity"
+  "error": "Not authorized to delete this entity.",
+  "code": "entity/not-authorized"
 }
 ```
 
-#### Server Error (500 Internal Server Error)
+#### Delete Failed (`404 Not Found`)
 
 ```json
 {
-  "error": "Failed to delete the entity"
+  "error": "Entity not found or already deleted.",
+  "code": "entity/delete-failed"
 }
 ```
 
-----------
+#### Server Error (`500 Internal Server Error`)
+
+```json
+{
+  "error": "Failed to delete the entity.",
+  "code": "entity/server-error",
+  "details": "[error message]"
+}
+```
+
+---
 
 ## Notes
 
--   Only the entity's author or an admin of the project can delete the entity.
--   If the entity is successfully deleted, no content is returned.
--   Deleting an entity also deducts the reputation points earned for creating it.
+- Only the original author or a master user can delete an entity.
+- Deleting an entity deducts reputation points from the author if applicable.
+- If the entity does not exist or was already deleted, the operation is a no-op.
+  Here's the full API documentation for the `DELETE /entities/:entityId` endpoint:
+
+---
+
+# Delete Entity
+
+## Endpoint
+
+**URL:** `/entities/:entityId`
+**Method:** `DELETE`
+**Authentication Required:** Yes
+
+---
+
+## Description
+
+Deletes an existing entity within the project.
+Only the entity author or a master user can perform this operation.
+Deletion also deducts reputation from the original author.
+
+---
+
+## Request
+
+### Path Parameters
+
+| Parameter  | Type     | Required | Description                     |
+| ---------- | -------- | -------- | ------------------------------- |
+| `entityId` | `string` | Yes      | The ID of the entity to delete. |
+
+### Headers
+
+| Header          | Type     | Required | Description                           |
+| --------------- | -------- | -------- | ------------------------------------- |
+| `Authorization` | `string` | Yes      | Bearer token for authenticated users. |
+
+---
+
+## Response
+
+### Success Response (`204 No Content`)
+
+Entity was successfully deleted. No response body is returned.
+
+---
+
+### Error Responses
+
+#### Invalid ID (`400 Bad Request`)
+
+```json
+{
+  "error": "Invalid entityId.",
+  "code": "entity/invalid-id"
+}
+```
+
+#### Not Found (`404 Not Found`)
+
+```json
+{
+  "error": "Entity not found.",
+  "code": "entity/not-found"
+}
+```
+
+#### Unauthorized (`403 Forbidden`)
+
+```json
+{
+  "error": "Not authorized to delete this entity.",
+  "code": "entity/not-authorized"
+}
+```
+
+#### Delete Failed (`404 Not Found`)
+
+```json
+{
+  "error": "Entity not found or already deleted.",
+  "code": "entity/delete-failed"
+}
+```
+
+#### Server Error (`500 Internal Server Error`)
+
+```json
+{
+  "error": "Failed to delete the entity.",
+  "code": "entity/server-error",
+  "details": "[error message]"
+}
+```
+
+---
+
+## Notes
+
+- Only the original author or a master user can delete an entity.
+- Deleting an entity deducts reputation points from the author if applicable.
+- If the entity does not exist or was already deleted, the operation is a no-op.

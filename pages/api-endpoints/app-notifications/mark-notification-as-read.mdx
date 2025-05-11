@@ -2,7 +2,7 @@
 
 ## Endpoint
 
-**URL:** `/mark-as-read`
+**URL:** `/:projectId/app-notifications/:notificationId/mark-as-read`
 
 **Method:** `PATCH`
 
@@ -12,11 +12,17 @@
 
 ## Description
 
-This endpoint allows an authenticated user to mark a specific notification as read. The request requires the `notificationId` in the request body and updates the notification's `isRead` status to `true`.
+Mark a specific app notification as read for the authenticated user.
 
 ---
 
 ## Request
+
+### Path Parameters
+
+| Parameter        | Type     | Required | Description                         |
+| ---------------- | -------- | -------- | ----------------------------------- |
+| `notificationId` | `string` | Yes      | ID of the notification to mark read |
 
 ### Headers
 
@@ -26,20 +32,13 @@ This endpoint allows an authenticated user to mark a specific notification as re
 
 ### Body Parameters
 
-| Parameter        | Type     | Required | Description                                      |
-| --------------- | -------- | -------- | ------------------------------------------------ |
-| `notificationId` | `string` | Yes      | The ID of the notification to mark as read. |
+_None_
 
 #### Example Request
 
-```sh
-PATCH /mark-as-read
-Content-Type: application/json
+```http
+PATCH /proj1234/app-notifications/abcd123/mark-as-read
 Authorization: Bearer <ACCESS_TOKEN>
-
-{
-  "notificationId": "notification123"
-}
 ```
 
 ---
@@ -48,19 +47,18 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ### Success Response (200 OK)
 
-```json
-{
-  "message": "Notification marked as read successfully."
-}
+```
+(No response body)
 ```
 
 ### Error Responses
 
-#### Invalid Request (400 Bad Request)
+#### Notification Not Found (404 Not Found)
 
 ```json
 {
-  "error": "Missing required notificationId in request body"
+  "error": "Notification not found",
+  "code": "app-notification/not-found"
 }
 ```
 
@@ -68,7 +66,9 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error.",
+  "code": "app-notification/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -76,6 +76,5 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ## Notes
 
-- This endpoint requires authentication.
-- The `notificationId` must be a valid notification that belongs to the authenticated user.
-- If the `notificationId` is invalid or does not exist, no changes will be made.
+- Only notifications belonging to the authenticated user can be marked as read.
+- If no matching notification is found, a 404 is returned.

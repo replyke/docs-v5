@@ -1,60 +1,70 @@
-
 # Sign Out
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/auth/sign-out`
+**URL:** `/:projectId/auth/sign-out`
 
 **Method:** `POST`
 
-**Authentication Required:** Yes (Requires a valid refresh token)
+**Authentication Required:** No
 
-----------
+---
 
 ## Description
 
-This endpoint allows users to sign out by invalidating their refresh token. While Replyke does not have explicit sign-up or sign-in endpoints, the `verify-external-user` endpoint acts as both a sign-up and sign-in mechanism. Developers must call this endpoint when a user logs out from their app to ensure that the refresh token is invalidated; otherwise, the user may still be considered signed in within the Replyke system.
+Signs the user out by deleting the refresh token from the database and clearing the HttpOnly cookie. Accepts the refresh token from either the request body or cookie.
 
-----------
+---
 
 ## Request
 
 ### Headers
 
--   `Content-Type: application/json`
+| Header   | Type     | Required | Description                              |
+| -------- | -------- | -------- | ---------------------------------------- |
+| `Cookie` | `string` | No       | Can include `replyke-refresh-jwt` cookie |
 
 ### Body Parameters
 
-| Parameter      | Type   | Required | Description |
-|---------------|--------|----------|-------------|
-| `refreshToken` | `string` | No  | Refresh token (if not provided via cookie). |
+| Field          | Type     | Required | Description                                       |
+| -------------- | -------- | -------- | ------------------------------------------------- |
+| `refreshToken` | `string` | No       | JWT refresh token (optional if cookie is present) |
 
+#### Example Request
 
-----------
+```json
+{
+  "refreshToken": "<REFRESH_TOKEN>"
+}
+```
+
+---
 
 ## Response
 
 ### Success Response (204 No Content)
 
-This endpoint always returns a `204 No Content` response, regardless of whether a refresh token was found and invalidated. There is no response body.
+```
+(No response body)
+```
 
 ### Error Responses
 
-#### Internal Server Error (500 Internal Server Error)
+#### Server Error (500 Internal Server Error)
 
 ```json
 {
-  "error": "Internal server error."
+  "error": "Internal server error.",
+  "code": "auth/server-error",
+  "details": "<Error message>"
 }
 ```
 
-**Reason:** An unexpected error occurred while processing the request.
-
-----------
+---
 
 ## Notes
 
--   If a refresh token is provided via cookies, it is cleared when this endpoint is called.
--   If a valid refresh token exists in the database, it is deleted to prevent further use.
--   A `204 No Content` response is always returned, even if the token was not found, to prevent information leaks.
--   Developers must call this endpoint when logging a user out to fully terminate their session in Replyke’s authentication system.
+- If the refresh token is valid, the corresponding token record is deleted.
+- If the refresh token is invalid, expired, or missing, 204 is still returned.
+- The cookie `replyke-refresh-jwt` is cleared if present.
+- No information is leaked about whether the token existed or was valid.

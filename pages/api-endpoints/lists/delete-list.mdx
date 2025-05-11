@@ -2,7 +2,7 @@
 
 ## Endpoint
 
-**URL:** `/`
+**URL:** `/:projectId/lists/:listId`
 
 **Method:** `DELETE`
 
@@ -12,7 +12,7 @@
 
 ## Description
 
-This endpoint allows users to delete a list that they own. The list must not be a root list (i.e., it must have a parent list). Authentication is required.
+Deletes a sub-list owned by the authenticated user. Root lists cannot be deleted.
 
 ---
 
@@ -24,43 +24,37 @@ This endpoint allows users to delete a list that they own. The list must not be 
 | --------------- | -------- | -------- | -------------------------------- |
 | `Authorization` | `string` | Yes      | Bearer token for authentication. |
 
-### Body Parameters
+### Path Parameters
 
-| Parameter | Type     | Required | Description                       |
-| --------- | -------- | -------- | --------------------------------- |
-| `listId`  | `string` | Yes      | The ID of the list to be deleted. |
+| Parameter | Type     | Required | Description                   |
+| --------- | -------- | -------- | ----------------------------- |
+| `listId`  | `string` | Yes      | The ID of the list to delete. |
 
 #### Example Request
 
-```sh
-DELETE /
-Content-Type: application/json
+```http
+DELETE /proj1234/lists/list_abc
 Authorization: Bearer <ACCESS_TOKEN>
-
-{
-  "listId": "67890"
-}
 ```
 
 ---
 
 ## Response
 
-### Success Response (200 OK)
+### Success Response (204 No Content)
 
-```json
-{
-  "message": "List and its sublists deleted successfully."
-}
+```
+(No response body)
 ```
 
 ### Error Responses
 
-#### Missing or Invalid Data (400 Bad Request)
+#### Missing List ID (400 Bad Request)
 
 ```json
 {
-  "error": "Missing required parameters in request body."
+  "error": "Missing list ID",
+  "code": "list/invalid-id"
 }
 ```
 
@@ -68,7 +62,17 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "error": "List not found."
+  "error": "List not found",
+  "code": "list/not-found"
+}
+```
+
+#### Root List Deletion Forbidden (403 Forbidden)
+
+```json
+{
+  "error": "Root lists cannot be deleted",
+  "code": "list/cannot-delete-root"
 }
 ```
 
@@ -76,7 +80,9 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ```json
 {
-  "error": "Server error."
+  "error": "Server error",
+  "code": "list/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -84,6 +90,6 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ## Notes
 
-- The list must belong to the authenticated user.
-- Root lists cannot be deleted.
-- Deleting a list also deletes its sublists.
+- Only sub-lists (lists with a non-null `parentId`) can be deleted.
+- Returns `204 No Content` on successful deletion.
+- Root lists are protected and cannot be deleted.

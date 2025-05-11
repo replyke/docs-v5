@@ -1,8 +1,8 @@
-# API Endpoint Documentation: Upload a File
+# Upload File
 
 ## Endpoint
 
-**URL:** `/:projectId/storage/`
+**URL:** `/:projectId/storage`
 
 **Method:** `POST`
 
@@ -12,79 +12,78 @@
 
 ## Description
 
-This endpoint allows an authenticated user to upload a file to storage within a specified project. The uploaded file is processed, validated, and stored, returning metadata such as the file ID, relative path, and public URL.
+Upload a file to project storage. The file is saved using a path structure defined by `pathParts`. The filename is sanitized using transliteration.
 
 ---
 
 ## Request
-
-### Path Parameters
-
-| Parameter   | Type     | Required | Description                                  |
-| ----------- | -------- | -------- | -------------------------------------------- |
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
 
 ### Headers
 
 | Header          | Type     | Required | Description                      |
 | --------------- | -------- | -------- | -------------------------------- |
 | `Authorization` | `string` | Yes      | Bearer token for authentication. |
+| `Content-Type`  | `string` | Yes      | Must be `multipart/form-data`.   |
 
-### Body Parameters
+### Body Parameters (multipart/form-data)
 
-| Parameter   | Type      | Required | Description                                             |
-| ---------- | --------- | -------- | ------------------------------------------------------- |
-| `file`     | `File`    | Yes      | The file to be uploaded.                                |
-| `pathParts` | `string[]` | Yes      | An array of strings representing the file storage path. |
+| Field       | Type            | Required | Description                                      |
+| ----------- | --------------- | -------- | ------------------------------------------------ |
+| `file`      | File (binary)   | Yes      | The file to upload. Must not exceed 15MB.        |
+| `pathParts` | `string` (JSON) | Yes      | A JSON stringified array of folder path segments |
 
 #### Example Request
 
-```sh
-POST /proj1234/storage/
-Content-Type: multipart/form-data
+```http
+POST /proj1234/storage
 Authorization: Bearer <ACCESS_TOKEN>
+Content-Type: multipart/form-data
 
-(pathParts as JSON in form-data)
-file: <binary_file>
+Body:
+- file: (binary file)
+- pathParts: ["profile", "images"]
 ```
 
 ---
 
 ## Response
 
-### Success Response (200 OK)
+### Success Response (201 Created)
 
 ```json
 {
   "fileId": "abc123",
-  "relativePath": "uploads/folder/filename.png",
-  "publicPath": "https://your-storage-url.com/uploads/folder/filename.png"
+  "relativePath": "profile/images/photo.jpg",
+  "publicPath": "https://cdn.example.com/profile/images/photo.jpg"
 }
 ```
 
 ### Error Responses
 
-#### Invalid Request (400 Bad Request)
+#### Missing File (400 Bad Request)
 
 ```json
 {
-  "error": "pathParts must be an array of strings"
+  "error": "No file provided",
+  "code": "storage/no-file"
 }
 ```
 
-#### No File Provided (400 Bad Request)
+#### Invalid Path Parts (400 Bad Request)
 
 ```json
 {
-  "error": "No file provided"
+  "error": "pathParts must be an array of strings",
+  "code": "storage/invalid-path-parts"
 }
 ```
 
-#### File Size Exceeds Limit (413 Payload Too Large)
+#### File Too Large (413 Payload Too Large)
 
 ```json
 {
-  "error": "File size exceeds the allowed limit of 15MB"
+  "error": "File size exceeds the allowed limit of 15MB",
+  "code": "storage/file-too-large"
 }
 ```
 
@@ -92,7 +91,9 @@ file: <binary_file>
 
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error",
+  "code": "storage/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -100,9 +101,5 @@ file: <binary_file>
 
 ## Notes
 
-- This endpoint requires authentication.
-- The uploaded file is sanitized to ensure safe storage and retrieval.
-- The file size limit depends on your project's plan.
-- The returned `publicPath` provides a direct link to access the uploaded file.
-- The file name and path are processed using transliteration for consistency.
-
+- The uploaded file is stored at the location specified by `pathParts`, with the filename sanitized.
+- Returns a public URL to access the file.

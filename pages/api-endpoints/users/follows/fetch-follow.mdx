@@ -1,8 +1,8 @@
-# Fetch Follow Relationship
+# Check Follow Status
 
 ## Endpoint
 
-**URL:** `/:projectId/follows/`
+**URL:** `/:projectId/users/:userId/follow`
 
 **Method:** `GET`
 
@@ -12,24 +12,17 @@
 
 ## Description
 
-This endpoint allows an authenticated user to check if they are following another user within a specified project. If the follow relationship exists, the response returns `isFollowing: true`, otherwise, it returns `isFollowing: false`.
+Check whether the authenticated user is following a specific user.
 
 ---
 
 ## Request
 
-### Query Parameters
-
-| Parameter     | Type     | Required | Description                                          |
-| ------------- | -------- | -------- | ---------------------------------------------------- |
-| `followerId`  | `string` | Yes      | The ID of the user who is following.                |
-| `followedId`  | `string` | Yes      | The ID of the user being followed.                  |
-
 ### Path Parameters
 
-| Parameter   | Type     | Required | Description                                  |
-| ----------- | -------- | -------- | -------------------------------------------- |
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
+| Parameter | Type     | Required | Description                      |
+| --------- | -------- | -------- | -------------------------------- |
+| `userId`  | `string` | Yes      | ID of the user to check against. |
 
 ### Headers
 
@@ -37,11 +30,14 @@ This endpoint allows an authenticated user to check if they are following anothe
 | --------------- | -------- | -------- | -------------------------------- |
 | `Authorization` | `string` | Yes      | Bearer token for authentication. |
 
+### Body Parameters
+
+_None_
+
 #### Example Request
 
-```sh
-GET /proj1234/follows/?followerId=67890&followedId=98765
-Content-Type: application/json
+```http
+GET /proj1234/users/abcd123/follow
 Authorization: Bearer <ACCESS_TOKEN>
 ```
 
@@ -67,27 +63,13 @@ or
 
 ### Error Responses
 
-#### Invalid Request (400 Bad Request)
-
-```json
-{
-  "error": "Missing params in request query"
-}
-```
-
-#### Unauthorized Request (403 Forbidden)
-
-```json
-{
-  "error": "You are not authorized to perform this action."
-}
-```
-
 #### Server Error (500 Internal Server Error)
 
 ```json
 {
-  "error": "Internal server error."
+  "error": "Internal server error.",
+  "code": "follow/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -95,8 +77,5 @@ or
 
 ## Notes
 
-- This endpoint requires authentication.
-- The `followerId` must match the logged-in user's ID.
-- If the `followerId` or `followedId` is missing or invalid, the request will return a `400 Bad Request` error.
-- If the logged-in user is neither the `followerId` nor the `followedId`, the request will return a `403 Forbidden` error.
-
+- This endpoint checks if a follow relationship exists between the authenticated user and the target user.
+- Always returns a 200 response with a boolean flag `isFollowing`.

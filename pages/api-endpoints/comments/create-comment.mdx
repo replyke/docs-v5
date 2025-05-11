@@ -2,145 +2,171 @@
 
 ## Endpoint
 
-**URL:** `https://api.replyke.com/:projectId/comments/`
+**URL:** `/:projectId/comments`
 
 **Method:** `POST`
 
-**Authentication Required:** Yes (Requires a valid access token in the `Authorization` header)
+**Authentication Required:** Yes
 
-----------
+---
 
 ## Description
 
-This endpoint allows users to create a new comment or reply to an entity. Comments can include text content, GIFs, and mentions. If a comment is a reply, it must include a `parentId` referencing the parent comment.
+Creates a new comment or reply on a specific entity.
 
-----------
+- Comments can include text, a GIF, mentions, attachments, and metadata.
+- Only authenticated users (or master clients) may create comments.
+- Automatically handles reputation and notification logic.
+
+---
 
 ## Request
 
 ### Headers
 
--   `Content-Type: application/json`
--   `Authorization: Bearer <accessToken>` (Required, must contain a valid access token)
+| Header          | Type     | Required | Description                           |
+| --------------- | -------- | -------- | ------------------------------------- |
+| `Authorization` | `string` | Yes      | Bearer token for authenticated users. |
 
 ### Body Parameters
 
+| Field                 | Type                     | Required | Description                                                             |
+| --------------------- | ------------------------ | -------- | ----------------------------------------------------------------------- |
+| `entityId`            | `string`                 | Yes      | ID of the entity to attach the comment to.                              |
+| `content`             | `string`                 | No\*     | Text content of the comment. Required unless `gif` is provided.         |
+| `gif`                 | [`IGif`](#gif-structure) | No\*     | GIF object. Required unless `content` is provided.                      |
+| `mentions`            | `IMention[]`             | No       | List of mentioned users.                                                |
+| `parentId`            | `string`                 | No       | ID of the parent comment (for replies).                                 |
+| `referencedCommentId` | `string`                 | No       | ID of a referenced (quoted) comment.                                    |
+| `foreignId`           | `string`                 | No       | Optional external reference ID.                                         |
+| `attachments`         | `Record<string, any>[]`  | No       | List of attached files or resources.                                    |
+| `metadata`            | `Record<string, any>`    | No       | Custom metadata for this comment.                                       |
+| `userId`              | `string`                 | No       | Allowed only for master clients. Posts the comment on behalf of a user. |
 
-| Parameter  | Type     | Required    | Description                                                                              |
-| ---------- | -------- | ----------- | ---------------------------------------------------------------------------------------- |
-| `entityId` | `string` | Yes         | ID of the entity being commented on.                                                     |
-| `content`  | `string` | Conditional | The text content of the comment (required unless a GIF is provided).                     |
-| `gif`      | `object` | Conditional | A GIF object containing metadata (required if `content` is not provided).                |
-| `mentions` | `array`  | No          | Array of user mentions, each containing `id` and `username`. Defaults to an empty array. |
-| `parentId` | `string` | No          | ID of the parent comment if this is a reply.                                             |
+#### Example Request
 
-### GIF Object Structure
+```json
+{
+  "entityId": "a1b2c3d4",
+  "content": "Great article!",
+  "mentions": [{ "id": "user-123", "username": "alex" }],
+  "gif": null,
+  "parentId": "comment-456",
+  "attachments": [],
+  "metadata": { "source": "web" }
+}
+```
 
-| Parameter       | Type     | Required | Description                             |
-| --------------- | -------- | -------- | --------------------------------------- |
-| `id`            | `string` | Yes      | Unique identifier of the GIF.           |
-| `gifUrl`        | `string` | Yes      | URL of the GIF.                         |
-| `gifPreviewUrl` | `string` | Yes       | URL for the GIF preview (if available). |
-| `altText`       | `string` | Yes       | Alternative text for accessibility.     |
-| `url`           | `string` | Yes      | Direct URL to the GIF resource.         |
-| `aspectRatio`   | `string` | Yes       | The aspect ratio of the GIF.            |
-
-
-----------
+---
 
 ## Response
 
-### Success Response (200 OK)
+### Success Response (`201 Created`)
+
+Returns the newly created comment object:
 
 ```json
 {
-  "id": "<COMMENT_ID>",
-  "projectId": "<PROJECT_ID>",
-  "userId": "<USER_ID>",
-  "entityId": "<ENTITY_ID>",
-  "parentId": "<PARENT_ID>",
-  "content": "<COMMENT_CONTENT>",
-  "gif": {
-    "id": "<GIF_ID>",
-    "gifUrl": "<GIF_URL>",
-    "gifPreviewUrl": "<GIF_PREVIEW_URL>",
-    "altText": "<ALT_TEXT>",
-    "url": "<URL>",
-    "aspectRatio": "<ASPECT_RATIO>"
-  },
-  "mentions": ["<MENTIONS_ARRAY>"],
-  "upvotes": [],
-  "downvotes": [],
-  "createdAt": "<TIMESTAMP>",
-  "updatedAt": "<TIMESTAMP>",
-  "deletedAt": null
+  "id": "comment-789",
+  "entityId": "a1b2c3d4",
+  "userId": "user-456",
+  "content": "Great article!",
+  "mentions": [{ "id": "user-123", "username": "alex" }],
+  "gif": null,
+  "attachments": [],
+  "metadata": { "source": "web" },
+  "createdAt": "2025-05-11T10:00:00.000Z",
+  "updatedAt": "2025-05-11T10:00:00.000Z"
 }
-
 ```
+
+---
 
 ### Error Responses
 
-#### Missing `entityId` (400 Bad Request)
+#### Missing Entity ID (`400 Bad Request`)
 
 ```json
 {
-  "error": "Missing entity ID"
+  "error": "Missing entity ID",
+  "code": "comment/missing-entity-id"
 }
-
 ```
 
-**Reason:** The request must include an `entityId` to associate the comment with an entity.
-
-#### Missing Required Content (400 Bad Request)
+#### Missing Content (`400 Bad Request`)
 
 ```json
 {
-  "error": "Missing required comment content"
+  "error": "Missing required comment content",
+  "code": "comment/missing-content"
 }
-
 ```
 
-**Reason:** Either `content` or `gif` must be provided to create a comment.
-
-#### Entity Not Found (404 Not Found)
+#### Missing User ID (`400 Bad Request`)
 
 ```json
 {
-  "error": "Entity not found"
+  "error": "Missing user ID",
+  "code": "comment/missing-user-id"
 }
-
 ```
 
-**Reason:** The specified `entityId` does not correspond to any existing entity.
-
-#### Unauthorized Request (401 Unauthorized)
+#### Entity Not Found (`404 Not Found`)
 
 ```json
 {
-  "error": "Missing or invalid authorization token"
+  "error": "Entity not found",
+  "code": "comment/entity-not-found"
 }
-
 ```
 
-**Reason:** The request did not include a valid access token in the `Authorization` header.
-
-#### Server Error (500 Internal Server Error)
+#### Server Error (`500 Internal Server Error`)
 
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error",
+  "code": "comment/server-error",
+  "details": "[error message]"
 }
-
 ```
 
-**Reason:** An unexpected error occurred while processing the request.
-
-----------
+---
 
 ## Notes
 
--   A comment must include either `content` or a `gif` but not be empty.
--   If `parentId` is provided, the comment will be treated as a reply.
--   The user's reputation will be automatically updated upon posting a comment.
--   Notifications are automatically generated for mentioned users and parent comment authors.
--   The `Authorization` header must be provided and contain a valid access token.
+- Either `content` or `gif` must be present.
+- If `userId` is provided, the request must come from a master client.
+- Reputation is awarded to the user who posts the comment.
+- Notifications are triggered automatically:
+
+  - To the entity author
+  - To the parent comment author (for replies)
+  - To each mentioned user (excluding duplicates)
+
+- API usage for comments is tracked via Redis.
+
+---
+
+### Gif Structure
+
+```ts
+interface IGif {
+  altText: string;
+  gifPreviewUrl: string;
+  gifUrl: string;
+  id: string;
+  url: string;
+  aspectRatio: string;
+}
+```
+
+---
+
+### Mention Structure
+
+```ts
+interface IMention {
+  id: string; // User ID
+  username: string; // Username at time of mention
+}
+```

@@ -12,7 +12,7 @@
 
 ## Description
 
-This endpoint allows clients to retrieve the number of followers a specific user has within a project.
+Retrieve the number of followers a specific user has within a given project.
 
 ---
 
@@ -20,18 +20,17 @@ This endpoint allows clients to retrieve the number of followers a specific user
 
 ### URL Parameters
 
-| Parameter   | Type     | Required | Description                                 |
-| ----------- | -------- | -------- | ------------------------------------------- |
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
-| `userId`    | `string` | Yes      | The ID of the user whose followers count is being fetched. |
+| Parameter | Type     | Required | Description                                                |
+| --------- | -------- | -------- | ---------------------------------------------------------- |
+| `userId`  | `string` | Yes      | The ID of the user whose followers count is being fetched. |
 
 ### Headers
 
-*None*
+_None_
 
 ### Body Parameters
 
-*None*
+_None_
 
 #### Example Request
 
@@ -57,7 +56,8 @@ GET /proj1234/users/67890/followers-count
 
 ```json
 {
-  "error": "Missing or invalid userId in request query"
+  "error": "Missing or invalid userId in request parameters",
+  "code": "user/invalid-user-id"
 }
 ```
 
@@ -65,7 +65,9 @@ GET /proj1234/users/67890/followers-count
 
 ```json
 {
-  "error": "Server error"
+  "error": "Internal server error",
+  "code": "user/server-error",
+  "details": "<Error message>"
 }
 ```
 
@@ -73,84 +75,5 @@ GET /proj1234/users/67890/followers-count
 
 ## Notes
 
-- This endpoint does not require authentication.
-- The response provides only the count of followers, not the list of follower details.
-
-# API Endpoint Documentation: Fetch Followers Count
-
-## Endpoint
-
-**URL:** `/:projectId/users/:userId/followers-count`
-
-**Method:** `GET`
-
-**Authentication Required:** No
-
----
-
-## Description
-
-This endpoint allows clients to retrieve the number of followers a specific user has within a project.
-
----
-
-## Request
-
-### URL Parameters
-
-| Parameter   | Type     | Required | Description                                 |
-| ----------- | -------- | -------- | ------------------------------------------- |
-| `projectId` | `string` | Yes      | The project ID associated with the request. |
-| `userId`    | `string` | Yes      | The ID of the user whose followers count is being fetched. |
-
-### Headers
-
-*None*
-
-### Body Parameters
-
-*None*
-
-#### Example Request
-
-```sh
-GET /proj1234/users/67890/followers-count
-```
-
----
-
-## Response
-
-### Success Response (200 OK)
-
-```json
-{
-  "count": 42
-}
-```
-
-### Error Responses
-
-#### Missing or Invalid User ID (400 Bad Request)
-
-```json
-{
-  "error": "Missing or invalid userId in request query"
-}
-```
-
-#### Server Error (500 Internal Server Error)
-
-```json
-{
-  "error": "Server error"
-}
-```
-
----
-
-## Notes
-
-- This endpoint does not require authentication.
-- The response provides only the count of followers, not the list of follower details.
-
+- This endpoint does **not** require authentication.
+- Only the follower count is returned, not individual follower details.
