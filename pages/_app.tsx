@@ -7,15 +7,16 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <link rel="icon" href="/favicon.webp" type="image/webp" />
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-R0WW1RW0XF"
-          strategy="afterInteractive"
-        />
-        <Script
-          id="gtag-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
+      </Head>
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-R0WW1RW0XF"
+        strategy="afterInteractive"
+      />
+      <Script
+        id="gtag-init"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
@@ -23,9 +24,9 @@ export default function App({ Component, pageProps }: AppProps) {
                 cookie_domain: 'replyke.com'
               });
             `,
-          }}
-        />
-      </Head>
+        }}
+      />
+
       <Component {...pageProps} />
     </>
   );
