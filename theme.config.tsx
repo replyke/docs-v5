@@ -1,7 +1,6 @@
 import React from "react";
 import { DocsThemeConfig, useConfig } from "nextra-theme-docs";
 import Image from "next/image";
-import { NextSeo } from "next-seo";
 
 const currentYear = new Date().getFullYear(); // Get the current year dynamically
 
@@ -56,12 +55,25 @@ const config: DocsThemeConfig = {
   head() {
     const { frontMatter } = useConfig();
     console.log("From config: ", { frontMatter });
+    // return (
+    //   <NextSeo
+    //     title={frontMatter.title}
+    //     titleTemplate="%s | Replyke"
+    //     description={frontMatter.description}
+    //   />
+    // );
+
     return (
-      <NextSeo
-        title={frontMatter.title}
-        titleTemplate="%s | Replyke"
-        description={frontMatter.description}
-      />
+      <>
+        <title>{frontMatter.title || "Docs"} | Replyke</title>
+        <meta
+          name="description"
+          content={
+            frontMatter.description ||
+            "Learn how to integrate add social features into your app in minutes"
+          }
+        />
+      </>
     );
   },
   project: {
