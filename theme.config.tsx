@@ -55,6 +55,7 @@ const config: DocsThemeConfig = {
   // ),
   head() {
     const { frontMatter } = useConfig();
+    console.log("From config: ", { frontMatter });
     return (
       <NextSeo
         title={frontMatter.title}
