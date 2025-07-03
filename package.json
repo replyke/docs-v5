@@ -5,7 +5,9 @@
   "description": "Documentation for Replyke v4",
   "scripts": {
     "dev": "next dev",
-    "build": "next build"
+    "build": "next build",
+    "serve": "http-server out -p 3000",
+    "generate:pdf": "node scripts/generate-doc-pdf.js"
   },
   "engines": {
     "node": ">=18"
@@ -29,6 +31,10 @@
   },
   "devDependencies": {
     "@types/node": "18.11.10",
+    "globby": "^14.1.0",
+    "http-server": "^14.1.1",
+    "pdf-merger-js": "^5.1.2",
+    "puppeteer": "^24.9.0",
     "typescript": "^4.9.3"
   }
 }
