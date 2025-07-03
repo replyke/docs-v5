@@ -7,6 +7,8 @@ export default function App({ Component, pageProps }: AppProps) {
   const { frontMatter } = useConfig();
   const { title, description } = frontMatter;
 
+  console.log({ title, description });
+
   return (
     <>
       <Head>
