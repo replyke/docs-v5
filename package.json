@@ -24,6 +24,7 @@
   "homepage": "https://github.com/Replyke/docs-v5#readme",
   "dependencies": {
     "next": "^15.0.0",
+    "next-seo": "^6.8.0",
     "nextra": "^3.0.0",
     "nextra-theme-docs": "^3.0.0",
     "react": "^18.2.0",

@@ -1,6 +1,5 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import Script from "next/script";
 import { useConfig } from "nextra-theme-docs";
 
 export default function App({ Component, pageProps }: AppProps) {

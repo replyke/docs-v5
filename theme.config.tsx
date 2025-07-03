@@ -1,6 +1,7 @@
 import React from "react";
-import { DocsThemeConfig } from "nextra-theme-docs";
+import { DocsThemeConfig, useConfig } from "nextra-theme-docs";
 import Image from "next/image";
+import { NextSeo } from "next-seo";
 
 const currentYear = new Date().getFullYear(); // Get the current year dynamically
 
@@ -37,26 +38,36 @@ const currentYear = new Date().getFullYear(); // Get the current year dynamicall
 //   );
 // };
 
-const Logo = ()=>{
-  return <Image src="/logo-black.webp" alt="logo" width={100} height={20}/>
-}
+const Logo = () => {
+  return <Image src="/logo-black.webp" alt="logo" width={100} height={20} />;
+};
 const config: DocsThemeConfig = {
   logo: <Logo />,
-  head: (
-    <>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta property="og:title" content="Replyke Docs" />
-      <meta
-        property="og:description"
-        content="Build communities around your content"
+  // head: (
+  //   <>
+  //     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  //     <meta property="og:title" content="Replyke Docs" />
+  //     <meta
+  //       property="og:description"
+  //       content="Build communities around your content"
+  //     />
+  //   </>
+  // ),
+  head() {
+    const { frontMatter } = useConfig();
+    return (
+      <NextSeo
+        title={frontMatter.title}
+        titleTemplate="%s | Replyke"
+        description={frontMatter.description}
       />
-    </>
-  ),
+    );
+  },
   project: {
     link: "https://github.com/Replyke/docs-v5",
   },
   chat: {
-    link: 'https://discord.com/invite/REKxnCJzPz',
+    link: "https://discord.com/invite/REKxnCJzPz",
   },
   docsRepositoryBase: "https://github.com/Replyke/docs-v5",
   footer: {
